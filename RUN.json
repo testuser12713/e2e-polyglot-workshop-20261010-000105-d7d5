@@ -1,0 +1,36 @@
+{
+  "runcontract": 1,
+  "services": [
+    {
+      "name": "db",
+      "kind": "database",
+      "engine": "postgres"
+    },
+    {
+      "name": "queue",
+      "kind": "database",
+      "engine": "valkey"
+    },
+    {
+      "name": "worker",
+      "dir": "worker",
+      "stack": "python",
+      "kind": "worker",
+      "install": [
+        ["${python}", "-m", "pip", "install", "-q", "-e", "."]
+      ],
+      "start": ["${python}", "main.py"],
+      "ready_log": "completed-orders queue empty",
+      "depends_on": ["db", "queue"],
+      "env": {
+        "DATABASE_URL": { "dev": "${service:db.url}" },
+        "VALKEY_URL": { "dev": "${service:queue.url}" },
+        "WORKSHOP_HOURLY_RATE_CENTS": { "dev": "8900" },
+        "WORKER_POLL_INTERVAL_MS": { "dev": "2000" }
+      },
+      "test": [
+        ["${python}", "-m", "pytest"]
+      ]
+    }
+  ]
+}
