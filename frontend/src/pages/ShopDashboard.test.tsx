@@ -76,9 +76,7 @@ function stubApi(handler?: (url: string) => Response | Promise<Response>) {
 
 function renderDashboard() {
   return render(
-    <MemoryRouter
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
+    <MemoryRouter>
       <ShopDashboard />
     </MemoryRouter>,
   )
