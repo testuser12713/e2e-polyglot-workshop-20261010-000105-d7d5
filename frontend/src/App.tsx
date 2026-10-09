@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import AppointmentRequest from './pages/AppointmentRequest'
 import OrderTracking from './pages/OrderTracking'
 import Invoice from './pages/Invoice'
@@ -9,6 +9,8 @@ import ShopOrderDetail from './pages/ShopOrderDetail'
 import ShopDashboard from './pages/ShopDashboard'
 import Impressum from './pages/Impressum'
 import Datenschutz from './pages/Datenschutz'
+import RequireSession from './components/RequireSession'
+import { logout, useSession } from './lib/session'
 
 function NotFound() {
   return (
@@ -31,7 +33,15 @@ function NotFound() {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const session = useSession()
+  const navigate = useNavigate()
   const closeMenu = () => setMenuOpen(false)
+
+  const handleLogout = () => {
+    logout()
+    closeMenu()
+    navigate('/shop/login', { replace: true })
+  }
 
   return (
     <div className="app-shell">
@@ -74,9 +84,35 @@ export default function App() {
             <NavLink className="topnav__link" to="/shop/dashboard">
               Dashboard
             </NavLink>
-            <NavLink className="topnav__link" to="/shop/login">
-              Anmeldung
-            </NavLink>
+            {session ? (
+              <>
+                <span
+                  className="topnav__email"
+                  title={session.employee.email}
+                  style={{
+                    color: 'var(--color-muted)',
+                    fontSize: 'var(--size-sm)',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '180px',
+                  }}
+                >
+                  {session.employee.email}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={handleLogout}
+                >
+                  Abmelden
+                </button>
+              </>
+            ) : (
+              <NavLink className="topnav__link" to="/shop/login">
+                Anmeldung
+              </NavLink>
+            )}
           </nav>
         </div>
       </header>
@@ -94,12 +130,30 @@ export default function App() {
             <Route path="/datenschutz" element={<Datenschutz />} />
             <Route path="/shop" element={<Navigate to="/shop/orders" replace />} />
             <Route path="/shop/login" element={<ShopLogin />} />
-            <Route path="/shop/orders" element={<ShopOrders />} />
+            <Route
+              path="/shop/orders"
+              element={
+                <RequireSession>
+                  <ShopOrders />
+                </RequireSession>
+              }
+            />
             <Route
               path="/shop/orders/:orderNumber"
-              element={<ShopOrderDetail />}
+              element={
+                <RequireSession>
+                  <ShopOrderDetail />
+                </RequireSession>
+              }
             />
-            <Route path="/shop/dashboard" element={<ShopDashboard />} />
+            <Route
+              path="/shop/dashboard"
+              element={
+                <RequireSession>
+                  <ShopDashboard />
+                </RequireSession>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
