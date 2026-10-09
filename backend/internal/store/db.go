@@ -43,12 +43,40 @@ func Open(ctx context.Context, databaseURL string) (*Store, error) {
 		return nil, fmt.Errorf("PostgreSQL is not reachable: %w", err)
 	}
 
-	if _, err := pool.Exec(ctx, schemaSQL); err != nil {
+	if err := applySchema(ctx, pool); err != nil {
 		pool.Close()
-		return nil, fmt.Errorf("apply database schema: %w", err)
+		return nil, err
 	}
 
 	return &Store{Pool: pool}, nil
+}
+
+// schemaLockKey is an application-wide advisory lock key that serializes schema
+// creation across processes. Concurrent CREATE TABLE IF NOT EXISTS statements
+// can still collide on pg_class (SQLSTATE 23505), so the schema is applied
+// while holding a transaction-scoped advisory lock.
+const schemaLockKey int64 = 0x776f726b73686f70 // "workshop" as ASCII bytes
+
+// applySchema runs the embedded schema in one transaction guarded by an
+// advisory lock, so several callers opening the database at the same time
+// (parallel test packages, multiple API replicas) never race on DDL.
+func applySchema(ctx context.Context, pool *pgxpool.Pool) error {
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("apply database schema: begin: %w", err)
+	}
+	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
+
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`, schemaLockKey); err != nil {
+		return fmt.Errorf("apply database schema: lock: %w", err)
+	}
+	if _, err := tx.Exec(ctx, schemaSQL); err != nil {
+		return fmt.Errorf("apply database schema: %w", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("apply database schema: commit: %w", err)
+	}
+	return nil
 }
 
 // Ping verifies that the pool can still reach PostgreSQL.
