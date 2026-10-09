@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -226,5 +227,141 @@ func TestLoginRateLimitIsPerClient(t *testing.T) {
 	// Another client has its own budget.
 	if other := doLogin(handler, clientB, email, "wrong"); other.Code != http.StatusUnauthorized {
 		t.Fatalf("second client status = %d, want 401 (limit is per client)", other.Code)
+	}
+}
+
+// openConfiguredStore opens the real PostgreSQL instance named by cfg and skips
+// when no DATABASE_URL is available (SPEC AC-25).
+func openConfiguredStore(t *testing.T, cfg *config.Config) *store.Store {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	st, err := store.Open(ctx, cfg.DatabaseURL)
+	if err != nil {
+		t.Fatalf("store.Open: %v", err)
+	}
+	t.Cleanup(st.Close)
+	return st
+}
+
+// loadBootstrapConfig puts the credentials into the environment, loads the
+// configuration exactly as the API does at startup and returns it. The e-mail
+// is stored with surrounding whitespace and capitals so every test below proves
+// the login compares it trimmed and case-insensitively.
+func loadBootstrapConfig(t *testing.T, email, password string) *config.Config {
+	t.Helper()
+	if os.Getenv("VALKEY_URL") == "" {
+		t.Setenv("VALKEY_URL", "redis://127.0.0.1:6379/0")
+	}
+	t.Setenv("BOOTSTRAP_EMPLOYEE_EMAIL", "  "+strings.ToUpper(email)+"  ")
+	t.Setenv("BOOTSTRAP_EMPLOYEE_PASSWORD", password)
+	t.Setenv("BOOTSTRAP_EMPLOYEE_NAME", "Werkstatt-Team")
+	cfg, err := config.Load()
+	if err != nil {
+		t.Fatalf("config.Load: %v", err)
+	}
+	return cfg
+}
+
+// TestLoginWithConfiguredBootstrapCredentials logs in with exactly the
+// credentials the product bootstrapped from BOOTSTRAP_EMPLOYEE_EMAIL /
+// BOOTSTRAP_EMPLOYEE_PASSWORD and asserts 200 with a token, while a wrong
+// password still answers 401 in the unified error body (AC-15, AC-16).
+func TestLoginWithConfiguredBootstrapCredentials(t *testing.T) {
+	if os.Getenv("DATABASE_URL") == "" {
+		t.Skip("DATABASE_URL not set; skipping PostgreSQL integration test")
+	}
+
+	email := fmt.Sprintf("bootstrap-%d@example.test", time.Now().UnixNano())
+	const password = "s3cret-bootstrap"
+	cfg := loadBootstrapConfig(t, email, password)
+	if cfg.BootstrapEmployeeEmail != email {
+		t.Fatalf("configured e-mail = %q, want normalised %q", cfg.BootstrapEmployeeEmail, email)
+	}
+
+	st := openConfiguredStore(t, cfg)
+	t.Cleanup(func() { cleanupEmployee(t, st, email) })
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if _, err := st.BootstrapEmployee(ctx, cfg.BootstrapEmployeeEmail, cfg.BootstrapEmployeeName, cfg.BootstrapEmployeePassword); err != nil {
+		t.Fatalf("bootstrap employee: %v", err)
+	}
+
+	server := NewServer(st, cfg, nil)
+	server.loginLimiter.reset()
+	handler := server.Handler()
+
+	rec := doLogin(handler, "203.0.113.30:1111", email, password)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("login with configured bootstrap credentials = %d, want 200 (body %s)", rec.Code, rec.Body.String())
+	}
+	var body struct {
+		Token    string `json:"token"`
+		Employee struct {
+			Email string `json:"email"`
+		} `json:"employee"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("decode login body: %v", err)
+	}
+	if body.Token == "" {
+		t.Fatal("configured bootstrap login returned an empty token")
+	}
+	if body.Employee.Email != email {
+		t.Errorf("employee e-mail = %q, want %q", body.Employee.Email, email)
+	}
+
+	wrong := doLogin(handler, "203.0.113.31:1111", email, password+"-wrong")
+	if wrong.Code != http.StatusUnauthorized {
+		t.Fatalf("wrong password status = %d, want 401 (body %s)", wrong.Code, wrong.Body.String())
+	}
+	var env errorEnvelope
+	if err := json.Unmarshal(wrong.Body.Bytes(), &env); err != nil {
+		t.Fatalf("decode 401 body: %v", err)
+	}
+	if env.Error.Code != "unauthorized" || env.Error.Message == "" {
+		t.Errorf("401 body = %+v, want code unauthorized and a non-empty message", env.Error)
+	}
+}
+
+// TestLoginAcceptsConfiguredBootstrapPasswordAfterRotation covers the run that
+// started the product once (creating the employee with the first generated
+// password) and then served the login with a freshly generated one: the
+// configured credentials must still open the session, and a wrong password is
+// still rejected (AC-15, AC-16).
+func TestLoginAcceptsConfiguredBootstrapPasswordAfterRotation(t *testing.T) {
+	if os.Getenv("DATABASE_URL") == "" {
+		t.Skip("DATABASE_URL not set; skipping PostgreSQL integration test")
+	}
+
+	email := fmt.Sprintf("bootstrap-rotated-%d@example.test", time.Now().UnixNano())
+	cfg := loadBootstrapConfig(t, email, "first-run-password")
+
+	st := openConfiguredStore(t, cfg)
+	t.Cleanup(func() { cleanupEmployee(t, st, email) })
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if _, err := st.BootstrapEmployee(ctx, cfg.BootstrapEmployeeEmail, cfg.BootstrapEmployeeName, cfg.BootstrapEmployeePassword); err != nil {
+		t.Fatalf("bootstrap employee: %v", err)
+	}
+
+	// The next start rolls a new bootstrap password; the stored hash is still
+	// the first one.
+	rotated := *cfg
+	rotated.BootstrapEmployeePassword = "second-run-password"
+
+	server := NewServer(st, &rotated, nil)
+	server.loginLimiter.reset()
+	handler := server.Handler()
+
+	rec := doLogin(handler, "203.0.113.40:1111", email, "second-run-password")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("login with rotated bootstrap password = %d, want 200 (body %s)", rec.Code, rec.Body.String())
+	}
+
+	if wrong := doLogin(handler, "203.0.113.41:1111", email, "not-the-password"); wrong.Code != http.StatusUnauthorized {
+		t.Fatalf("wrong password status = %d, want 401", wrong.Code)
 	}
 }
