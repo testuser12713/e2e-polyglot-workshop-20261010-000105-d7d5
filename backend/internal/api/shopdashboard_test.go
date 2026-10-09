@@ -205,3 +205,18 @@ func TestShopDashboardReturnsSeededMetrics(t *testing.T) {
 		t.Errorf("revenue_month_cents = %d, want %d (baseline %d + 15000 seeded)", got.RevenueMonthCents, want, before.RevenueMonthCents)
 	}
 }
+
+// TestShopDashboardRejectsMissingSession checks that a caller without an
+// Authorization header gets 401, not the workshop metrics. It needs no database:
+// the handler must refuse the request before it touches the store (SPEC AC-28).
+func TestShopDashboardRejectsMissingSession(t *testing.T) {
+	srv := NewServer(nil, &config.Config{CORSAllowedOrigin: "http://localhost:5173"}, nil)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/shop/dashboard", nil)
+	rec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("GET /api/shop/dashboard without token status = %d, want 401; body: %s", rec.Code, rec.Body.String())
+	}
+}

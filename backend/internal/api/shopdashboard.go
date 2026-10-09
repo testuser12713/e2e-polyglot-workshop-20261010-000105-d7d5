@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -14,10 +13,15 @@ type shopDashboardResponse struct {
 
 // handleShopDashboard serves GET /api/shop/dashboard. It reports the number of
 // still-open orders, the number of orders finished today (UTC) and the revenue
-// of the current UTC month, all read from PostgreSQL. The route is wrapped by
-// requireSession, so only an authenticated employee reaches this handler
-// (SPEC AC-21, AC-28).
+// of the current UTC month, all read from PostgreSQL. Like its sibling
+// handleListOrders it refuses an unauthenticated caller itself, because
+// requireSession does not yet reject a missing token (SPEC AC-21, AC-28).
 func (s *Server) handleShopDashboard(w http.ResponseWriter, r *http.Request) {
+	if !hasShopSession(r) {
+		unauthorized(w, "Anmeldung erforderlich.")
+		return
+	}
+
 	if s == nil || s.Store == nil || s.Store.Pool == nil {
 		internalError(w, "Die Datenbank ist nicht konfiguriert.")
 		return
@@ -25,7 +29,7 @@ func (s *Server) handleShopDashboard(w http.ResponseWriter, r *http.Request) {
 
 	stats, err := s.Store.DashboardStats(r.Context())
 	if err != nil {
-		log.Printf("dashboard stats: %v", err)
+		logStoreFailure("dashboard stats", err)
 		internalError(w, "Das Dashboard konnte nicht geladen werden.")
 		return
 	}
