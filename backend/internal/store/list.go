@@ -26,23 +26,6 @@ type OrderSummary struct {
 	CustomerName string `json:"customer_name"`
 }
 
-// Customer is the customer block of an order detail.
-type Customer struct {
-	ID    int64  `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Phone string `json:"phone"`
-}
-
-// Vehicle is the vehicle block of an order detail.
-type Vehicle struct {
-	ID      int64  `json:"id"`
-	Plate   string `json:"plate"`
-	Make    string `json:"make"`
-	Model   string `json:"model"`
-	Mileage int    `json:"mileage"`
-}
-
 // OrderItem is one captured position (labour or part) of an order.
 type OrderItem struct {
 	ID             int64   `json:"id"`
