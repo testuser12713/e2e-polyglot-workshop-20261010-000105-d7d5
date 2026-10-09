@@ -51,6 +51,14 @@ func run() error {
 	}
 	defer st.Close()
 
+	// Create the first employee from configuration. This is idempotent: a
+	// restart creates no duplicate and never overwrites a changed password
+	// (SPEC AC-16). When no bootstrap credentials are configured the API still
+	// starts and simply has no employee yet.
+	if err := bootstrapEmployee(connectCtx, st, cfg); err != nil {
+		return err
+	}
+
 	q, err := queue.New(cfg.ValkeyURL)
 	if err != nil {
 		return err
@@ -89,6 +97,32 @@ func run() error {
 	defer cancel()
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		return fmt.Errorf("graceful shutdown: %w", err)
+	}
+	return nil
+}
+
+// bootstrapEmployee creates the first workshop employee from configuration when
+// its e-mail does not exist yet. It is idempotent and never overwrites an
+// existing password (SPEC AC-16). Only technical facts are logged, never the
+// e-mail or the password.
+func bootstrapEmployee(ctx context.Context, st *store.Store, cfg *config.Config) error {
+	if cfg.BootstrapEmployeeEmail == "" || cfg.BootstrapEmployeePassword == "" {
+		log.Print("bootstrap employee not configured; skipping")
+		return nil
+	}
+	created, err := st.BootstrapEmployee(
+		ctx,
+		cfg.BootstrapEmployeeEmail,
+		cfg.BootstrapEmployeeName,
+		cfg.BootstrapEmployeePassword,
+	)
+	if err != nil {
+		return fmt.Errorf("bootstrap employee: %w", err)
+	}
+	if created {
+		log.Print("bootstrap employee created")
+	} else {
+		log.Print("bootstrap employee already present; left unchanged")
 	}
 	return nil
 }
