@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -89,6 +89,36 @@ describe('ShopLogin', () => {
     expect(url).toBe('http://api.test/api/shop/login')
     expect(init.method).toBe('POST')
     expect(localStorage.getItem('werkstatt.session')).toContain('tok-123')
+  })
+
+  it('submits the values present in the form even when no React change event fired', async () => {
+    const employee = {
+      id: 7,
+      email: 'anna@werkstatt-berger.de',
+      name: 'Anna Berger',
+    }
+    const fetchMock = mockFetch(() =>
+      fakeResponse(200, { token: 'tok-123', employee }),
+    )
+
+    renderApp('/shop/login')
+
+    // A browser autofill or an automation probe writes the input elements
+    // directly. Reading the form on submit must still send what was written,
+    // instead of the empty React state.
+    const email = screen.getByLabelText('E-Mail') as HTMLInputElement
+    const password = screen.getByLabelText('Passwort') as HTMLInputElement
+    email.value = 'anna@werkstatt-berger.de'
+    password.value = 'geheim'
+    fireEvent.submit(email.closest('form') as HTMLFormElement)
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(JSON.parse(String(init.body))).toEqual({
+      email: 'anna@werkstatt-berger.de',
+      password: 'geheim',
+    })
   })
 
   it('shows exactly one generic alert on a 401 without revealing the wrong part', async () => {

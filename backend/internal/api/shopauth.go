@@ -1,13 +1,10 @@
 package api
 
 import (
-	"context"
-	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"net"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -116,7 +113,7 @@ func (s *Server) handleShopLogin(w http.ResponseWriter, r *http.Request) {
 		badRequest(w, "Ungültige Anfrage.")
 		return
 	}
-	email := strings.ToLower(strings.TrimSpace(req.Email))
+	email := store.NormalizeEmail(req.Email)
 	if email == "" || req.Password == "" {
 		writeError(w, http.StatusUnauthorized, "unauthorized", invalidCredentialsMessage)
 		return
@@ -127,12 +124,18 @@ func (s *Server) handleShopLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	employee, ok, err := s.authenticateEmployee(r.Context(), email, req.Password)
+	employee, hash, err := s.Store.LookupEmployeeCredentials(r.Context(), email)
 	if err != nil {
+		if errors.Is(err, store.ErrNotFound) {
+			s.recordLoginFailure(client)
+			unauthorized(w, invalidCredentialsMessage)
+			return
+		}
 		internalError(w, "Interner Fehler. Bitte später erneut versuchen.")
 		return
 	}
-	if !ok {
+
+	if !store.VerifyPassword(hash, req.Password) {
 		s.recordLoginFailure(client)
 		unauthorized(w, invalidCredentialsMessage)
 		return
@@ -152,67 +155,6 @@ func (s *Server) handleShopLogin(w http.ResponseWriter, r *http.Request) {
 			Name:  employee.Name,
 		},
 	})
-}
-
-// authenticateEmployee resolves the submitted credentials to an employee. The
-// stored bcrypt hash is the primary check. The configured bootstrap credentials
-// are accepted as well, because the first employee is created from that
-// configuration at startup (SPEC AC-16) and the password is rolled per run by
-// RUN.json: after a configuration rotation — or on a database that was reset
-// after the process booted — the stored hash no longer matches the operator's
-// configured password. Accepting the configured pair keeps "log in with exactly
-// the bootstrap credentials" true while leaving the stored hash untouched, so a
-// password changed by hand is never overwritten (AC-16).
-func (s *Server) authenticateEmployee(ctx context.Context, email, password string) (store.Employee, bool, error) {
-	if s == nil || s.Store == nil {
-		return store.Employee{}, false, errors.New("store is not configured")
-	}
-
-	employee, hash, err := s.Store.LookupEmployeeCredentials(ctx, email)
-	if err == nil && store.VerifyPassword(hash, password) {
-		return employee, true, nil
-	}
-	if err != nil && !errors.Is(err, store.ErrNotFound) {
-		return store.Employee{}, false, err
-	}
-
-	if !s.bootstrapCredentialsMatch(email, password) {
-		return store.Employee{}, false, nil
-	}
-
-	// The configured employee is the bootstrap account. When its row is missing
-	// (the schema was reset after startup) it is recreated idempotently before
-	// the session is opened.
-	if errors.Is(err, store.ErrNotFound) {
-		bootEmail := store.NormalizeEmail(s.Config.BootstrapEmployeeEmail)
-		if _, berr := s.Store.BootstrapEmployee(ctx, bootEmail, s.Config.BootstrapEmployeeName, s.Config.BootstrapEmployeePassword); berr != nil {
-			return store.Employee{}, false, berr
-		}
-		employee, _, err = s.Store.LookupEmployeeCredentials(ctx, bootEmail)
-		if err != nil {
-			return store.Employee{}, false, err
-		}
-	}
-	return employee, true, nil
-}
-
-// bootstrapCredentialsMatch reports whether the submitted pair is exactly the
-// configured bootstrap employee credentials. It compares the password in
-// constant time and only matches the configured e-mail, so the fallback can
-// never authenticate a different employee account.
-func (s *Server) bootstrapCredentialsMatch(email, password string) bool {
-	if s == nil || s.Config == nil {
-		return false
-	}
-	configuredEmail := store.NormalizeEmail(s.Config.BootstrapEmployeeEmail)
-	configuredPassword := s.Config.BootstrapEmployeePassword
-	if configuredEmail == "" || configuredPassword == "" {
-		return false
-	}
-	if email != configuredEmail {
-		return false
-	}
-	return subtle.ConstantTimeCompare([]byte(password), []byte(configuredPassword)) == 1
 }
 
 func (s *Server) recordLoginFailure(client string) {
