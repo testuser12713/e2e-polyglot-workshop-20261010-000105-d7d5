@@ -63,10 +63,7 @@ function installFetch() {
 
 function renderShopOrders(initialPath = '/shop/orders') {
   return render(
-    <MemoryRouter
-      initialEntries={[initialPath]}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
+    <MemoryRouter initialEntries={[initialPath]}>
       <ShopOrders />
     </MemoryRouter>,
   )
