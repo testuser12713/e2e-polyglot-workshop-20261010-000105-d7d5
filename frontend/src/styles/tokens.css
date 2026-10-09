@@ -1,0 +1,70 @@
+/*
+ * Design tokens — the single source of truth from DESIGN.md.
+ * Every colour, spacing, radius, font and size used by the app comes from here.
+ * No @import, no web fonts: the app ships only its own build (AC-32).
+ */
+:root {
+  /* Colors */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface_sunken: #eef1f4;
+  --color-fg: #1f2933;
+  --color-fg_strong: #111820;
+  --color-muted: #6b7280;
+  --color-border: #dde1e6;
+  --color-border_strong: #c3cad3;
+  --color-accent: #2563eb;
+  --color-accent_hover: #1d4ed8;
+  --color-accent_active: #1e40af;
+  --color-accent_subtle: #eff4ff;
+  --color-focus_ring: #93b4fb;
+  --color-danger: #b91c1c;
+  --color-danger_subtle: #fef2f2;
+  --color-success: #047857;
+  --color-success_subtle: #eaf7f1;
+  --color-warning: #b45309;
+  --color-warning_subtle: #fef4e6;
+  --color-status_angefragt: #5b6472;
+  --color-status_angefragt_bg: #f1f3f5;
+  --color-status_bestaetigt: #1d4ed8;
+  --color-status_bestaetigt_bg: #eff4ff;
+  --color-status_in_arbeit: #b45309;
+  --color-status_in_arbeit_bg: #fef4e6;
+  --color-status_fertig: #047857;
+  --color-status_fertig_bg: #eaf7f1;
+  --color-status_abgeholt: #374151;
+  --color-status_abgeholt_bg: #eceef1;
+  --color-overlay: rgba(17, 24, 32, 0.45);
+
+  /* Typography — system fonts only, shipped with the OS (no web fonts). */
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas,
+    'Liberation Mono', monospace;
+  --heading-weight: 600;
+  --body-weight: 400;
+  --size-xs: 12px;
+  --size-sm: 14px;
+  --size-md: 16px;
+  --size-lg: 20px;
+  --size-xl: 24px;
+  --size-2xl: 32px;
+  --line-body: 1.5;
+  --line-heading: 1.25;
+  --tracking-heading: -0.01em;
+
+  /* Spacing scale (8px grid) */
+  --space-0: 4px;
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  /* Border radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+}
