@@ -24,10 +24,7 @@ function mockFetch(
 
 function renderApp(initialPath: string) {
   return render(
-    <MemoryRouter
-      initialEntries={[initialPath]}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
+    <MemoryRouter initialEntries={[initialPath]}>
       <App />
     </MemoryRouter>,
   )
