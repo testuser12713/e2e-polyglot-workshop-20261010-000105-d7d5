@@ -1,0 +1,40 @@
+/*
+ * Styles for the legal pages (Impressum / Datenschutz).
+ * Co-located and namespaced so no other ticket has to touch global.css.
+ * Every value is a token from tokens.css (8px grid, no arbitrary pixels).
+ */
+
+.legal-page {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.legal-page__eyebrow {
+  margin-bottom: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.legal-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.legal-section__title {
+  margin-bottom: var(--space-1);
+  font-size: var(--size-lg);
+}
+
+.legal-section p {
+  color: var(--color-fg);
+}
+
+.legal-divider {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}

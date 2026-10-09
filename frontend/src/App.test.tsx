@@ -100,7 +100,7 @@ describe('App shell', () => {
 
       await user.click(within(legalNav).getByRole('link', { name: 'Datenschutz' }))
       expect(
-        screen.getByRole('heading', { level: 1, name: 'Datenschutz' }),
+        screen.getByRole('heading', { level: 1, name: 'Datenschutzerklärung' }),
       ).toBeInTheDocument()
 
       unmount()
