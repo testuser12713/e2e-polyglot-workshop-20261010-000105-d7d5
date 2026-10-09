@@ -17,20 +17,112 @@
       "stack": "python",
       "kind": "worker",
       "install": [
-        ["${python}", "-m", "pip", "install", "-q", "-e", "."]
+        [
+          "${python}",
+          "-m",
+          "pip",
+          "install",
+          "-q",
+          "-e",
+          "."
+        ]
       ],
-      "start": ["${python}", "main.py"],
+      "start": [
+        "${python}",
+        "main.py"
+      ],
       "ready_log": "completed-orders queue empty",
-      "depends_on": ["db", "queue"],
+      "depends_on": [
+        "db",
+        "queue"
+      ],
       "env": {
-        "DATABASE_URL": { "dev": "${service:db.url}" },
-        "VALKEY_URL": { "dev": "${service:queue.url}" },
-        "WORKSHOP_HOURLY_RATE_CENTS": { "dev": "8900" },
-        "WORKER_POLL_INTERVAL_MS": { "dev": "2000" }
+        "DATABASE_URL": {
+          "dev": "${service:db.url}"
+        },
+        "VALKEY_URL": {
+          "dev": "${service:queue.url}"
+        },
+        "WORKSHOP_HOURLY_RATE_CENTS": {
+          "dev": "8900"
+        },
+        "WORKER_POLL_INTERVAL_MS": {
+          "dev": "2000"
+        }
       },
       "test": [
-        ["${python}", "-m", "pytest"]
+        [
+          "${python}",
+          "-m",
+          "pytest"
+        ]
       ]
+    },
+    {
+      "name": "api",
+      "dir": "backend",
+      "stack": "go",
+      "kind": "server",
+      "install": [
+        [
+          "go",
+          "mod",
+          "download"
+        ]
+      ],
+      "start": [
+        "go",
+        "run",
+        "."
+      ],
+      "port": 8080,
+      "port_env": "API_PORT",
+      "health": {
+        "path": "/api/health",
+        "expect_status": [
+          200
+        ]
+      },
+      "depends_on": [
+        "db",
+        "queue"
+      ],
+      "test": [
+        [
+          "go",
+          "test",
+          "./..."
+        ]
+      ],
+      "env": {
+        "DATABASE_URL": {
+          "dev": "${service:db.url}"
+        },
+        "VALKEY_URL": {
+          "dev": "${service:queue.url}"
+        },
+        "CORS_ALLOWED_ORIGIN": {
+          "dev": "${service:web.origin}"
+        },
+        "WORKSHOP_HOURLY_RATE_CENTS": {
+          "dev": "9500"
+        },
+        "BOOTSTRAP_EMPLOYEE_EMAIL": {
+          "dev": "werkstatt@example.de",
+          "not_secret": true,
+          "why": "Login e-mail of the first workshop employee; a public address, not a credential. The password beside it is the secret and is rolled per run."
+        },
+        "BOOTSTRAP_EMPLOYEE_PASSWORD": {
+          "generate": "hex",
+          "bytes": 16
+        },
+        "BOOTSTRAP_EMPLOYEE_NAME": {
+          "dev": "Werkstatt-Team"
+        },
+        "LOGIN_RATE_LIMIT_PER_MINUTE": {
+          "dev": "10"
+        }
+      }
     }
   ]
 }
