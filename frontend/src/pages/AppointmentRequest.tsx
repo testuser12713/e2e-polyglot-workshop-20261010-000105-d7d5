@@ -299,7 +299,7 @@ export default function AppointmentRequest() {
         >
           Kundenbereich
         </div>
-        <h1>Terminanfrage</h1>
+        <h1>Termin anfragen</h1>
         <p className="page-header__subtitle">
           Erfassen Sie Ihr Fahrzeug und Ihr Anliegen. Der Auftrag startet im Status
           „angefragt“ und erhält eine Auftragsnummer.
