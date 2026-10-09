@@ -61,7 +61,7 @@ describe('App shell', () => {
     ).toBeInTheDocument()
   })
 
-  it('switches the stub pages through the navigation', async () => {
+  it('switches the public stub pages and sends unauthenticated workshop links to the login', async () => {
     const user = userEvent.setup()
     renderApp('/appointment')
 
@@ -72,12 +72,12 @@ describe('App shell', () => {
 
     await user.click(screen.getByRole('link', { name: 'Werkstattbereich' }))
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Aufträge' }),
+      screen.getByRole('heading', { level: 1, name: 'Anmeldung' }),
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Dashboard' }))
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Dashboard' }),
+      screen.getByRole('heading', { level: 1, name: 'Anmeldung' }),
     ).toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Anmeldung' }))
