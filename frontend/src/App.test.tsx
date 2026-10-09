@@ -17,7 +17,7 @@ describe('App shell', () => {
 
     expect(
       screen.getByRole('link', { name: 'Werkstatt-Portal' }),
-    ).toBeInTheDocument()
+    ).toHaveAttribute('href', '/appointment')
 
     const mainNav = screen.getByRole('navigation', { name: 'Hauptnavigation' })
     expect(within(mainNav).getByRole('link', { name: 'Kundenbereich' })).toBeInTheDocument()
@@ -37,6 +37,25 @@ describe('App shell', () => {
 
   it('starts on the appointment request page', () => {
     renderApp()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Terminanfrage' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Werkstatt-Portal' }),
+    ).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('uses the header brand to reach the start page from another page', async () => {
+    const user = userEvent.setup()
+    renderApp('/track')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Status abfragen' }),
+    ).toBeInTheDocument()
+
+    const brand = screen.getByRole('link', { name: 'Werkstatt-Portal' })
+    await user.click(brand)
+
     expect(
       screen.getByRole('heading', { level: 1, name: 'Terminanfrage' }),
     ).toBeInTheDocument()

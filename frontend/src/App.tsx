@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import AppointmentRequest from './pages/AppointmentRequest'
 import OrderTracking from './pages/OrderTracking'
 import ShopLogin from './pages/ShopLogin'
@@ -36,9 +36,13 @@ export default function App() {
     <div className="app-shell">
       <header className="topnav">
         <div className="container topnav__inner">
-          <Link className="topnav__wordmark" to="/" onClick={closeMenu}>
+          <NavLink
+            className="topnav__wordmark"
+            to="/appointment"
+            onClick={closeMenu}
+          >
             Werkstatt-Portal
-          </Link>
+          </NavLink>
           <button
             type="button"
             className="topnav__menu-button"
