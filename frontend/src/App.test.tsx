@@ -5,10 +5,7 @@ import App from './App'
 
 function renderApp(initialPath = '/appointment') {
   return render(
-    <MemoryRouter
-      initialEntries={[initialPath]}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
+    <MemoryRouter initialEntries={[initialPath]}>
       <App />
     </MemoryRouter>,
   )
