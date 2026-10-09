@@ -16,12 +16,16 @@ type Server struct {
 	Config *config.Config
 	Store  *store.Store
 	Queue  *queue.Queue
+
+	// loginLimiter is the per-process failed-login counter used by
+	// POST /api/shop/login (SPEC AC-29).
+	loginLimiter *loginLimiter
 }
 
 // NewServer builds a Server from its dependencies. Store and Queue may be nil
 // for tests that only exercise routing and the health endpoint.
 func NewServer(st *store.Store, cfg *config.Config, q *queue.Queue) *Server {
-	return &Server{Config: cfg, Store: st, Queue: q}
+	return &Server{Config: cfg, Store: st, Queue: q, loginLimiter: newLoginLimiter()}
 }
 
 // Handler returns the fully wired HTTP handler: CORS (outermost, so error

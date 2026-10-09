@@ -97,18 +97,14 @@ func safePath(path string) string {
 }
 
 // requireSession enforces the workshop bearer token on the /api/shop/* routes
-// (everything except login). Unknown or expired tokens answer 401 with the
-// unified body.
-//
-// NOTE: while the endpoints are still placeholders, a completely absent
-// Authorization header falls through to the stub so it can answer 501 (the
-// skeleton start-contract). Ticket #15 turns a missing header into 401 once
-// sessions exist. See the merge request's OBJECTION line.
+// (everything except login). A missing, unknown or expired token answers 401
+// with the unified body, server-side, regardless of what the web app shows
+// (SPEC AC-28).
 func (s *Server) requireSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := bearerToken(r)
 		if token == "" {
-			next.ServeHTTP(w, r)
+			unauthorized(w, "Anmeldung erforderlich.")
 			return
 		}
 		id, email, name, err := s.lookupSession(r.Context(), token)
@@ -129,20 +125,11 @@ func (s *Server) lookupSession(ctx context.Context, token string) (int64, string
 	if s == nil || s.Store == nil || s.Store.Pool == nil {
 		return 0, "", "", fmt.Errorf("store is not configured")
 	}
-	const query = `
-		SELECT e.id, e.email, e.name
-		FROM sessions s
-		JOIN employees e ON e.id = s.employee_id
-		WHERE s.token = $1 AND s.expires_at > now()`
-	var (
-		id    int64
-		email string
-		name  string
-	)
-	if err := s.Store.Pool.QueryRow(ctx, query, token).Scan(&id, &email, &name); err != nil {
+	employee, err := s.Store.EmployeeBySessionToken(ctx, token)
+	if err != nil {
 		return 0, "", "", err
 	}
-	return id, email, name, nil
+	return employee.ID, employee.Email, employee.Name, nil
 }
 
 func bearerToken(r *http.Request) string {

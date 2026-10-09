@@ -64,7 +64,7 @@ func Load() (*Config, error) {
 		APIPort:                   defaulted("API_PORT", DefaultAPIPort),
 		CORSAllowedOrigin:         defaulted("CORS_ALLOWED_ORIGIN", DefaultCORSAllowedOrigin),
 		WorkshopHourlyRateCents:   intOrDefault("WORKSHOP_HOURLY_RATE_CENTS", DefaultWorkshopHourlyRateCents),
-		BootstrapEmployeeEmail:    strings.TrimSpace(os.Getenv("BOOTSTRAP_EMPLOYEE_EMAIL")),
+		BootstrapEmployeeEmail:    strings.ToLower(strings.TrimSpace(os.Getenv("BOOTSTRAP_EMPLOYEE_EMAIL"))),
 		BootstrapEmployeePassword: os.Getenv("BOOTSTRAP_EMPLOYEE_PASSWORD"),
 		BootstrapEmployeeName:     defaulted("BOOTSTRAP_EMPLOYEE_NAME", DefaultBootstrapEmployeeName),
 		LoginRateLimitPerMinute:   intOrDefault("LOGIN_RATE_LIMIT_PER_MINUTE", DefaultLoginRateLimitPerMinute),
