@@ -9,8 +9,9 @@ import (
 )
 
 // openTestStore connects to the real PostgreSQL instance the office provides
-// (SPEC AC-25). It is skipped when DATABASE_URL is not set. The schema is
-// applied by Open, so the test provisions the tables it uses.
+// (SPEC AC-25) and returns a shared context. It is skipped when DATABASE_URL is
+// not set. The schema is applied by Open, so the test provisions the tables it
+// uses. Both this file and the auth tests use this single helper.
 func openTestStore(t *testing.T) (*Store, context.Context) {
 	t.Helper()
 	databaseURL := os.Getenv("DATABASE_URL")
