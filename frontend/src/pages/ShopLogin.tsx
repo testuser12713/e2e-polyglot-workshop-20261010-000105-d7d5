@@ -49,8 +49,6 @@ function Spinner() {
 export default function ShopLogin() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -62,6 +60,14 @@ export default function ShopLogin() {
     if (submitting) {
       return
     }
+    // Read the submitted values from the form itself rather than from React
+    // state. The form is the source of truth: a browser autofill or an
+    // automation probe that writes the input elements without dispatching the
+    // events React listens for would otherwise submit empty credentials and get
+    // a 401 for a form the user actually filled in.
+    const data = new FormData(event.currentTarget)
+    const email = String(data.get('email') ?? '')
+    const password = String(data.get('password') ?? '')
     setError(null)
     setSubmitting(true)
     try {
@@ -111,8 +117,6 @@ export default function ShopLogin() {
                 type="email"
                 autoComplete="username"
                 placeholder="name@werkstatt-berger.de"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
               />
             </div>
 
@@ -123,8 +127,6 @@ export default function ShopLogin() {
                 name="password"
                 type="password"
                 autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
               />
             </div>
 

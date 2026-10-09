@@ -13,6 +13,15 @@ import (
 // or, for the login e-mail, a generic 401.
 var ErrNotFound = errors.New("not found")
 
+// NormalizeEmail is the single normalisation used for every employee e-mail, on
+// write (bootstrap) and on read (login lookup), so the two can never drift
+// apart: surrounding whitespace is dropped and the address is lower-cased.
+// Comparing the raw configured address with a stored one would otherwise reject
+// the very credentials the product bootstrapped (SPEC AC-15, AC-16).
+func NormalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
+}
+
 // Employee is a workshop employee as returned to clients. It deliberately
 // carries no password hash: the hash never leaves this package except through
 // LookupEmployeeCredentials.
@@ -31,7 +40,7 @@ func (s *Store) BootstrapEmployee(ctx context.Context, email, name, password str
 	if s == nil || s.Pool == nil {
 		return false, fmt.Errorf("store is not configured")
 	}
-	email = strings.ToLower(strings.TrimSpace(email))
+	email = NormalizeEmail(email)
 	if email == "" || password == "" {
 		return false, fmt.Errorf("bootstrap employee e-mail and password must both be set")
 	}
@@ -61,7 +70,7 @@ func (s *Store) LookupEmployeeCredentials(ctx context.Context, email string) (Em
 		return Employee{}, "", fmt.Errorf("store is not configured")
 	}
 
-	email = strings.ToLower(strings.TrimSpace(email))
+	email = NormalizeEmail(email)
 	const query = `SELECT id, email, name, password_hash FROM employees WHERE email = $1`
 	var (
 		employee Employee

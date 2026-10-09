@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -114,7 +113,7 @@ func (s *Server) handleShopLogin(w http.ResponseWriter, r *http.Request) {
 		badRequest(w, "Ungültige Anfrage.")
 		return
 	}
-	email := strings.ToLower(strings.TrimSpace(req.Email))
+	email := store.NormalizeEmail(req.Email)
 	if email == "" || req.Password == "" {
 		writeError(w, http.StatusUnauthorized, "unauthorized", invalidCredentialsMessage)
 		return
