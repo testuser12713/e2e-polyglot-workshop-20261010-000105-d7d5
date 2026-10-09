@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import Home from './pages/Home'
 import AppointmentRequest from './pages/AppointmentRequest'
 import OrderTracking from './pages/OrderTracking'
 import Invoice from './pages/Invoice'
@@ -120,7 +121,7 @@ export default function App() {
       <main className="app-main">
         <div className="container">
           <Routes>
-            <Route path="/" element={<Navigate to="/appointment" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/appointment" element={<AppointmentRequest />} />
             <Route path="/track" element={<OrderTracking />} />
             <Route path="/track/:orderNumber" element={<OrderTracking />} />
