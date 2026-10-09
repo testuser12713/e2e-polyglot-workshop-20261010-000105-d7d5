@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-// openOrderTestStore connects to the real PostgreSQL instance the office provides
+// openTestStore connects to the real PostgreSQL instance the office provides
 // (SPEC AC-25). It is skipped when DATABASE_URL is not set. The schema is
 // applied by Open, so the test provisions the tables it uses.
-func openOrderTestStore(t *testing.T) (*Store, context.Context) {
+func openTestStore(t *testing.T) (*Store, context.Context) {
 	t.Helper()
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
@@ -58,7 +58,7 @@ func cleanupOrder(t *testing.T, st *Store, created *CreatedOrder) {
 // "requested", both positions are stored with their amounts and exactly one
 // status-log entry exists (SPEC AC-03, AC-05).
 func TestCreateOrderPersistsOrderItemsAndStatus(t *testing.T) {
-	st, ctx := openOrderTestStore(t)
+	st, ctx := openTestStore(t)
 	unique := time.Now().UnixNano()
 
 	params := CreateOrderParams{
@@ -173,7 +173,7 @@ func TestCreateOrderPersistsOrderItemsAndStatus(t *testing.T) {
 // with the same e-mail and plate reuses the existing rows instead of creating
 // duplicates.
 func TestCreateOrderResolvesExistingCustomerAndVehicle(t *testing.T) {
-	st, ctx := openOrderTestStore(t)
+	st, ctx := openTestStore(t)
 	unique := time.Now().UnixNano()
 	email := fmt.Sprintf("store-reuse-%d@example.de", unique)
 	plate := fmt.Sprintf("REUSE-%d", unique)
