@@ -20,10 +20,7 @@ function stubFetch(status: number, body: unknown) {
 
 function renderPage(initialEntries: string[] = ['/track']) {
   return render(
-    <MemoryRouter
-      initialEntries={initialEntries}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
+    <MemoryRouter initialEntries={initialEntries}>
       <OrderTracking />
     </MemoryRouter>,
   )
