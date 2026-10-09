@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import AppointmentRequest from './pages/AppointmentRequest'
 import OrderTracking from './pages/OrderTracking'
+import Invoice from './pages/Invoice'
 import ShopLogin from './pages/ShopLogin'
 import ShopOrders from './pages/ShopOrders'
 import ShopOrderDetail from './pages/ShopOrderDetail'
@@ -67,6 +68,9 @@ export default function App() {
             <NavLink className="topnav__link" to="/track">
               Status abfragen
             </NavLink>
+            <NavLink className="topnav__link" to="/invoice">
+              Rechnung
+            </NavLink>
             <NavLink className="topnav__link" to="/shop/dashboard">
               Dashboard
             </NavLink>
@@ -84,6 +88,8 @@ export default function App() {
             <Route path="/appointment" element={<AppointmentRequest />} />
             <Route path="/track" element={<OrderTracking />} />
             <Route path="/track/:orderNumber" element={<OrderTracking />} />
+            <Route path="/invoice" element={<Invoice />} />
+            <Route path="/invoice/:orderNumber" element={<Invoice />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
             <Route path="/shop" element={<Navigate to="/shop/orders" replace />} />
