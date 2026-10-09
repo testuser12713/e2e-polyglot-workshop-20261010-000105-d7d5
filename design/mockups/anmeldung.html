@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anmeldung — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html" aria-current="page">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html" aria-current="page">Anmeldung</a>
+        <a class="nav-sheet__link" href="dashboard.html">Dashboard</a>
+        <a class="nav-sheet__link" href="auftraege.html">Auftragsliste</a>
+        <a class="nav-sheet__link" href="auftrag.html">Auftragsdetail</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container container--auth">
+
+      <div class="page-header" style="text-align:center;justify-content:center">
+        <div>
+          <h1 class="page-header__title" style="font-size:var(--size-xl)">Anmeldung</h1>
+          <p class="page-header__subtitle">Werkstattbereich</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="login-error" hidden>
+          <div class="alert alert--error" role="alert" style="margin-bottom:16px">
+            <span class="alert__glyph" aria-hidden="true">⚠</span>
+            <span class="alert__body">E-Mail oder Passwort ist falsch.</span>
+          </div>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="email">E-Mail</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="username" placeholder="name@werkstatt-berger.de">
+          </div>
+          <div class="field">
+            <label class="field__label" for="passwort">Passwort</label>
+            <input class="input" id="passwort" name="passwort" type="password" autocomplete="current-password">
+          </div>
+          <div class="btn-row" style="margin-top:24px">
+            <button class="btn btn--primary btn--block" type="submit" id="login-btn">Anmelden</button>
+          </div>
+        </form>
+
+        <p class="note" style="text-align:center;margin-top:16px">Zugang für Werkstattmitarbeiter</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    var form = document.getElementById('login-form');
+    var error = document.getElementById('login-error');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('email').value.trim();
+      var pass = document.getElementById('passwort').value;
+      var btn = document.getElementById('login-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn__spinner" aria-hidden="true"></span> Wird gesendet …';
+
+      window.setTimeout(function () {
+        var looksValid = /.+@.+\..+/.test(email) && pass.length >= 4;
+        if (looksValid) {
+          window.location.href = 'dashboard.html';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Anmelden';
+          error.hidden = false;
+        }
+      }, 600);
+    });
+  })();
+</script>
+</body>
+</html>

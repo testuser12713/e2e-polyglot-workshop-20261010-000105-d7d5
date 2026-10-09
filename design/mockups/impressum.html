@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impressum — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html" aria-current="page">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container container--narrow">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Rechtliches</div>
+          <h1 class="page-header__title">Impressum</h1>
+          <p class="page-header__subtitle">Angaben gemäß § 5 TMG</p>
+        </div>
+      </div>
+
+      <div class="card stack-4">
+        <section aria-labelledby="im-1">
+          <h2 id="im-1" class="card__label" style="margin-bottom:8px">Anbieter</h2>
+          <p>Kfz-Werkstatt Berger GmbH<br>Werkstattstraße 12<br>80331 München<br>Deutschland</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="im-2">
+          <h2 id="im-2" class="card__label" style="margin-bottom:8px">Vertreten durch</h2>
+          <p>Geschäftsführer: Thomas Berger</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="im-3">
+          <h2 id="im-3" class="card__label" style="margin-bottom:8px">Kontakt</h2>
+          <p>Telefon: +49 89 1234567<br>E-Mail: kontakt@werkstatt-berger.example</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="im-4">
+          <h2 id="im-4" class="card__label" style="margin-bottom:8px">Registereintrag</h2>
+          <p>Handelsregister: HRB 123456<br>Registergericht: Amtsgericht München<br>Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG: DE123456789</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="im-5">
+          <h2 id="im-5" class="card__label" style="margin-bottom:8px">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+          <p>Thomas Berger, Anschrift wie oben</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html" aria-current="page">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rechnung — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html" aria-current="page">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html" aria-current="page">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Kundenbereich</div>
+          <h1 class="page-header__title">Rechnung</h1>
+          <p class="page-header__subtitle">Alle Beträge in Euro, gerundet auf Cent.</p>
+        </div>
+      </div>
+
+      <div class="invoice-layout">
+
+        <!-- Left: positions -->
+        <div class="stack-4">
+          <div class="card" data-od-id="invoice-head">
+            <div class="invoice-head" style="margin-bottom:0">
+              <div class="invoice-head__meta">
+                <div class="eyebrow">Rechnungsnummer</div>
+                <div class="mono strong">RE-2025-000123</div>
+              </div>
+              <div class="invoice-head__meta">
+                <div class="eyebrow">Auftragsnummer</div>
+                <div class="mono strong">AW-2025-000123</div>
+              </div>
+              <div class="invoice-head__meta">
+                <div class="eyebrow">Rechnungsdatum</div>
+                <div class="strong" style="color:var(--color-fg_strong)">07.03.2025</div>
+              </div>
+              <div class="invoice-head__meta">
+                <div class="eyebrow">Fahrzeug</div>
+                <div class="strong" style="color:var(--color-fg_strong)">BMW 320d · <span class="mono">M-AB 1234</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" data-od-id="invoice-positions">
+            <div class="card__header">
+              <span class="card__label">Positionen</span>
+            </div>
+            <table class="line-table">
+              <thead>
+                <tr>
+                  <th scope="col">Beschreibung</th>
+                  <th scope="col" class="num">Menge/Std.</th>
+                  <th scope="col" class="num">Einzelpreis</th>
+                  <th scope="col" class="num">Betrag</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Arbeitszeit — Inspektion und Bremsenwechsel</td>
+                  <td class="num">2,5 h</td>
+                  <td class="num">89,00&nbsp;€</td>
+                  <td class="num">222,50&nbsp;€</td>
+                </tr>
+                <tr>
+                  <td>Bremsbelagsatz vorne</td>
+                  <td class="num">1</td>
+                  <td class="num">68,40&nbsp;€</td>
+                  <td class="num">68,40&nbsp;€</td>
+                </tr>
+                <tr>
+                  <td>Bremsscheibe vorne</td>
+                  <td class="num">2</td>
+                  <td class="num">54,90&nbsp;€</td>
+                  <td class="num">109,80&nbsp;€</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: summary -->
+        <aside class="card invoice-summary" data-od-id="invoice-summary">
+          <div class="card__header">
+            <span class="card__label">Zusammenfassung</span>
+          </div>
+          <ul class="summary-list">
+            <li class="summary-list__row"><span>Netto</span><span class="mono">400,70&nbsp;€</span></li>
+            <li class="summary-list__row"><span>MwSt. 19 %</span><span class="mono">76,13&nbsp;€</span></li>
+            <li class="summary-list__row summary-list__row--total"><span>Brutto</span><span class="mono">476,83&nbsp;€</span></li>
+          </ul>
+
+          <div class="alert alert--info" style="margin-top:24px">
+            <span class="alert__glyph" aria-hidden="true">i</span>
+            <span class="alert__body">Es wird keine E-Mail versendet; die Rechnung liegt im Postausgang.</span>
+          </div>
+
+          <div class="card__footer">
+            <button class="btn btn--secondary btn--block" type="button">Rechnung als PDF herunterladen</button>
+          </div>
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Werkstatt-Portal — Kundenbereich</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html" aria-current="page">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" data-od-id="nav-toggle">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet" data-od-id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html" aria-current="page">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container">
+
+      <div class="page-header" data-od-id="page-header">
+        <div>
+          <div class="eyebrow">Kundenbereich</div>
+          <h1 class="page-header__title">Willkommen im Werkstatt-Portal</h1>
+          <p class="page-header__subtitle">Termin anfragen, Auftragsstatus verfolgen und Rechnungen einsehen — alles an einem Ort.</p>
+        </div>
+      </div>
+
+      <section aria-labelledby="svc-title" class="stack-3">
+        <h2 id="svc-title" class="card__label">Ihre Anliegen</h2>
+        <div class="link-list">
+          <a class="link-card" href="terminanfrage.html" data-od-id="link-terminanfrage">
+            <span>
+              <span class="link-card__title">Terminanfrage</span><br>
+              <span class="link-card__desc">Fahrzeugdaten, Wunschtermin und Problembeschreibung erfassen.</span>
+            </span>
+            <span class="link-card__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="link-card" href="statusabfrage.html" data-od-id="link-statusabfrage">
+            <span>
+              <span class="link-card__title">Status abfragen</span><br>
+              <span class="link-card__desc">Auftragsnummer und Kennzeichen eingeben, aktuellen Status samt Verlauf sehen.</span>
+            </span>
+            <span class="link-card__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="link-card" href="rechnung.html" data-od-id="link-rechnung">
+            <span>
+              <span class="link-card__title">Rechnung einsehen</span><br>
+              <span class="link-card__desc">Positionen, Netto, 19 % Mehrwertsteuer und Brutto einsehen.</span>
+            </span>
+            <span class="link-card__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section aria-labelledby="ws-title" class="section-gap">
+        <h2 id="ws-title" class="card__label">Werkstattbereich</h2>
+        <div class="link-list" style="margin-top:12px">
+          <a class="link-card" href="anmeldung.html" data-od-id="link-anmeldung">
+            <span>
+              <span class="link-card__title">Anmeldung für Mitarbeiter</span><br>
+              <span class="link-card__desc">Zugang zur Auftragsliste, zum Dashboard und zur Auftragsbearbeitung.</span>
+            </span>
+            <span class="link-card__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+
+      <section aria-labelledby="ov-title" class="section-gap">
+        <h2 id="ov-title" class="card__label">Alle Bildschirme (Übersicht für die Durchsicht)</h2>
+        <div class="card" style="margin-top:12px">
+          <div class="kv">
+            <dt>Kundenbereich</dt>
+            <dd><a href="terminanfrage.html">Terminanfrage</a> · <a href="statusabfrage.html">Statusabfrage</a> · <a href="rechnung.html">Rechnung</a></dd>
+            <dt>Werkstattbereich</dt>
+            <dd><a href="anmeldung.html">Anmeldung</a> · <a href="dashboard.html">Dashboard</a> · <a href="auftraege.html">Auftragsliste</a> · <a href="auftrag.html">Auftragsdetail</a></dd>
+            <dt>Rechtliches</dt>
+            <dd><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></dd>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer" data-od-id="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) {
+      toggle.addEventListener('click', function () {
+        var open = sheet.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+    }
+  })();
+</script>
+</body>
+</html>

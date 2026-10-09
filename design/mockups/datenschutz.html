@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datenschutz — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html" aria-current="page">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container container--narrow">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Rechtliches</div>
+          <h1 class="page-header__title">Datenschutzerklärung</h1>
+          <p class="page-header__subtitle">Informationen zur Verarbeitung personenbezogener Daten nach Art. 13 DSGVO</p>
+        </div>
+      </div>
+
+      <div class="card stack-4">
+        <section aria-labelledby="ds-1">
+          <h2 id="ds-1" class="card__label" style="margin-bottom:8px">1. Verantwortlicher</h2>
+          <p>Kfz-Werkstatt Berger GmbH, Werkstattstraße 12, 80331 München, kontakt@werkstatt-berger.example, Telefon +49 89 1234567.</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="ds-2">
+          <h2 id="ds-2" class="card__label" style="margin-bottom:8px">2. Verarbeitete Daten</h2>
+          <p>Wir verarbeiten Name, E-Mail-Adresse, Telefonnummer, Fahrzeugdaten (Kennzeichen, Marke, Modell, Kilometerstand) sowie Auftrags- und Rechnungsdaten, die Sie im Werkstatt-Portal angeben oder die bei der Auftragsabwicklung entstehen.</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="ds-3">
+          <h2 id="ds-3" class="card__label" style="margin-bottom:8px">3. Zweck und Rechtsgrundlage</h2>
+          <p>Die Verarbeitung erfolgt zur Bearbeitung Ihrer Terminanfrage, zur Abwicklung des Werkstattauftrags und zur Rechnungsstellung (Art. 6 Abs. 1 lit. b DSGVO). Gesetzliche Aufbewahrungspflichten beruhen auf Art. 6 Abs. 1 lit. c DSGVO.</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="ds-4">
+          <h2 id="ds-4" class="card__label" style="margin-bottom:8px">4. Keine Weitergabe, keine Fremdressourcen</h2>
+          <p>Ihre Daten werden nicht an Dritte verkauft. Das Portal lädt keine Ressourcen von fremden Hosts: Schriften und Skripte werden aus dem eigenen Build ausgeliefert; es werden keine Analyse- oder Marketing-Dienste eingebunden.</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="ds-5">
+          <h2 id="ds-5" class="card__label" style="margin-bottom:8px">5. Speicherdauer</h2>
+          <p>Auftrags- und Rechnungsdaten bewahren wir im Rahmen der gesetzlichen Fristen auf. Anfragen ohne Auftragsergebnis löschen wir, sobald sie für die Bearbeitung nicht mehr erforderlich sind.</p>
+        </section>
+        <hr class="hr-sunken">
+        <section aria-labelledby="ds-6">
+          <h2 id="ds-6" class="card__label" style="margin-bottom:8px">6. Ihre Rechte</h2>
+          <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit sowie Widerspruch. Wenden Sie sich dazu an kontakt@werkstatt-berger.example. Ihnen steht ein Beschwerderecht bei einer Datenschutzaufsichtsbehörde zu.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html" aria-current="page">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+</body>
+</html>

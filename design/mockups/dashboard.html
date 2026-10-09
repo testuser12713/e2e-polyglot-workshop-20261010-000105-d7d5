@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Werkstattbereich</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="dashboard.html" aria-current="page">Werkstattbereich</a>
+      </nav>
+      <div class="topnav__user">
+        <span class="user-email" title="meister@werkstatt-berger.de">meister@werkstatt-berger.de</span>
+        <a class="btn btn--ghost btn--sm" href="anmeldung.html">Abmelden</a>
+      </div>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="dashboard.html" aria-current="page">Dashboard</a>
+        <a class="nav-sheet__link" href="auftraege.html">Auftragsliste</a>
+        <a class="nav-sheet__link" href="auftrag.html">Auftragsdetail</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Konto</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Abmelden</a>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Werkstattbereich</div>
+          <h1 class="page-header__title">Dashboard</h1>
+          <p class="page-header__subtitle">Überblick über offene Aufträge, Tagesabschlüsse und Monatsumsatz.</p>
+        </div>
+        <a class="btn btn--primary" href="auftraege.html">Zur Auftragsliste</a>
+      </div>
+
+      <section class="stat-grid" aria-label="Kennzahlen" data-od-id="stat-grid">
+        <div class="stat" data-od-id="stat-offen">
+          <span class="stat__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          </span>
+          <div>
+            <div class="stat__label">Offene Aufträge</div>
+            <div class="stat__value">7</div>
+            <div class="stat__context">angefragt, bestätigt, in Arbeit</div>
+          </div>
+        </div>
+        <div class="stat" data-od-id="stat-fertig">
+          <span class="stat__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <div>
+            <div class="stat__label">Heute fertig</div>
+            <div class="stat__value">4</div>
+            <div class="stat__context">Statuswechsel nach „fertig“ am 07.03.2025</div>
+          </div>
+        </div>
+        <div class="stat" data-od-id="stat-umsatz">
+          <span class="stat__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <div>
+            <div class="stat__label">Umsatz März 2025</div>
+            <div class="stat__value">12.480,00&nbsp;€</div>
+            <div class="stat__context">aus Rechnungen des laufenden Monats</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="dash-grid section-gap">
+
+        <section class="card" aria-labelledby="recent-title" data-od-id="recent-orders">
+          <div class="card__header">
+            <span class="card__label" id="recent-title">Neueste Aufträge</span>
+            <a href="auftraege.html">Alle anzeigen</a>
+          </div>
+          <div class="orders-cards">
+            <div class="order-card">
+              <div class="order-card__top">
+                <span class="order-card__no">AW-2025-000123</span>
+                <span class="badge badge--in-arbeit">in Arbeit</span>
+              </div>
+              <div class="order-card__row"><span class="order-card__label">Kennzeichen</span><span class="order-card__value mono">M-AB 1234</span></div>
+              <div class="order-card__row"><span class="order-card__label">Fahrzeug</span><span class="order-card__value">BMW 320d</span></div>
+            </div>
+            <div class="order-card">
+              <div class="order-card__top">
+                <span class="order-card__no">AW-2025-000122</span>
+                <span class="badge badge--bestaetigt">bestätigt</span>
+              </div>
+              <div class="order-card__row"><span class="order-card__label">Kennzeichen</span><span class="order-card__value mono">M-CD 9911</span></div>
+              <div class="order-card__row"><span class="order-card__label">Fahrzeug</span><span class="order-card__value">VW Golf 7</span></div>
+            </div>
+            <div class="order-card" style="border-bottom:0">
+              <div class="order-card__top">
+                <span class="order-card__no">AW-2025-000121</span>
+                <span class="badge badge--angefragt">angefragt</span>
+              </div>
+              <div class="order-card__row"><span class="order-card__label">Kennzeichen</span><span class="order-card__value mono">M-EF 2210</span></div>
+              <div class="order-card__row"><span class="order-card__label">Fahrzeug</span><span class="order-card__value">Audi A4 Avant</span></div>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th scope="col">Auftragsnummer</th><th scope="col">Kennzeichen</th><th scope="col">Fahrzeug</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="cell-no">AW-2025-000123</td><td class="cell-plate">M-AB 1234</td><td>BMW 320d</td><td><span class="badge badge--in-arbeit">in Arbeit</span></td></tr>
+              <tr><td class="cell-no">AW-2025-000122</td><td class="cell-plate">M-CD 9911</td><td>VW Golf 7</td><td><span class="badge badge--bestaetigt">bestätigt</span></td></tr>
+              <tr><td class="cell-no">AW-2025-000121</td><td class="cell-plate">M-EF 2210</td><td>Audi A4 Avant</td><td><span class="badge badge--angefragt">angefragt</span></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" aria-labelledby="by-status-title" data-od-id="by-status">
+          <div class="card__header">
+            <span class="card__label" id="by-status-title">Aufträge nach Status</span>
+          </div>
+          <ul class="summary-list">
+            <li class="summary-list__row"><span class="badge badge--angefragt">angefragt</span><span class="mono">3</span></li>
+            <li class="summary-list__row"><span class="badge badge--bestaetigt">bestätigt</span><span class="mono">2</span></li>
+            <li class="summary-list__row"><span class="badge badge--in-arbeit">in Arbeit</span><span class="mono">2</span></li>
+            <li class="summary-list__row"><span class="badge badge--fertig">fertig</span><span class="mono">4</span></li>
+            <li class="summary-list__row"><span class="badge badge--abgeholt">abgeholt</span><span class="mono">6</span></li>
+          </ul>
+          <div class="card__footer">
+            <a class="btn btn--secondary btn--block" href="auftraege.html">Aufträge filtern</a>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+</body>
+</html>

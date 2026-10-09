@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auftrag AW-2025-000123 — Werkstattbereich</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="dashboard.html" aria-current="page">Werkstattbereich</a>
+      </nav>
+      <div class="topnav__user">
+        <span class="user-email" title="meister@werkstatt-berger.de">meister@werkstatt-berger.de</span>
+        <a class="btn btn--ghost btn--sm" href="anmeldung.html">Abmelden</a>
+      </div>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="dashboard.html">Dashboard</a>
+        <a class="nav-sheet__link" href="auftraege.html">Auftragsliste</a>
+        <a class="nav-sheet__link" href="auftrag.html" aria-current="page">Auftragsdetail</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Konto</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Abmelden</a>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Auftrag</div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+            <h1 class="page-header__title mono">AW-2025-000123</h1>
+            <span class="badge badge--in-arbeit badge--lg" id="current-badge" data-od-id="current-badge">in Arbeit</span>
+          </div>
+          <p class="page-header__subtitle">BMW 320d · <span class="mono">M-AB 1234</span> · Kunde Thomas Berger</p>
+        </div>
+        <a class="btn btn--secondary" href="auftraege.html">Zurück zur Liste</a>
+      </div>
+
+      <div class="dash-grid">
+
+        <div class="stack-4">
+
+          <section class="card" aria-labelledby="meta-title" data-od-id="order-meta">
+            <div class="card__header"><span class="card__label" id="meta-title">Auftragsdaten</span></div>
+            <dl class="kv">
+              <dt>Auftragsnummer</dt><dd class="mono">AW-2025-000123</dd>
+              <dt>Kennzeichen</dt><dd class="mono">M-AB 1234</dd>
+              <dt>Fahrzeug</dt><dd>BMW 320d</dd>
+              <dt>Kilometerstand</dt><dd class="num">87.450 km</dd>
+              <dt>Wunschtermin</dt><dd class="num">07.03.2025</dd>
+              <dt>Kunde</dt><dd>Thomas Berger</dd>
+            </dl>
+            <hr class="hr-sunken">
+            <div class="card__label" style="margin-bottom:8px">Problembeschreibung</div>
+            <p class="note" style="color:var(--color-fg)">Quietschende Geräusche beim Bremsen und ruckelnde Lenkung bei niedriger Geschwindigkeit. Bitte Bremsen prüfen.</p>
+          </section>
+
+          <section class="card" aria-labelledby="pos-title" data-od-id="order-positions">
+            <div class="card__header">
+              <span class="card__label" id="pos-title">Erfasste Positionen</span>
+            </div>
+            <table class="line-table">
+              <thead>
+                <tr>
+                  <th scope="col">Beschreibung</th>
+                  <th scope="col" class="num">Menge/Std.</th>
+                  <th scope="col" class="num">Einzelpreis</th>
+                  <th scope="col" class="num">Betrag</th>
+                </tr>
+              </thead>
+              <tbody id="pos-tbody">
+                <tr>
+                  <td>Arbeitszeit — Inspektion und Bremsenwechsel</td>
+                  <td class="num">2,5 h</td>
+                  <td class="num">89,00&nbsp;€</td>
+                  <td class="num">222,50&nbsp;€</td>
+                </tr>
+                <tr>
+                  <td>Bremsbelagsatz vorne</td>
+                  <td class="num">1</td>
+                  <td class="num">68,40&nbsp;€</td>
+                  <td class="num">68,40&nbsp;€</td>
+                </tr>
+                <tr>
+                  <td>Bremsscheibe vorne</td>
+                  <td class="num">2</td>
+                  <td class="num">54,90&nbsp;€</td>
+                  <td class="num">109,80&nbsp;€</td>
+                </tr>
+              </tbody>
+            </table>
+            <hr class="hr-sunken">
+            <div class="stack-3" style="align-items:flex-end">
+              <ul class="summary-list" style="min-width:240px">
+                <li class="summary-list__row"><span>Netto</span><span class="mono" id="pos-netto">400,70&nbsp;€</span></li>
+                <li class="summary-list__row"><span>MwSt. 19 %</span><span class="mono" id="pos-steuer">76,13&nbsp;€</span></li>
+                <li class="summary-list__row summary-list__row--total"><span>Brutto</span><span class="mono" id="pos-brutto">476,83&nbsp;€</span></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="new-pos-title" data-od-id="position-editor">
+            <div class="card__header"><span class="card__label" id="new-pos-title">Position erfassen</span></div>
+            <p class="note" style="margin-bottom:16px">Arbeitszeit- und Teile-Positionen erscheinen später in der Rechnung. Beträge in Euro, gerundet auf Cent.</p>
+            <div class="pos-row" data-new-pos>
+              <div class="field">
+                <label class="field__label" for="np-beschr">Beschreibung</label>
+                <input class="input" id="np-beschr" type="text" placeholder="z. B. Arbeitszeit Achsvermessung">
+              </div>
+              <div class="field">
+                <label class="field__label" for="np-menge">Menge/Std.</label>
+                <input class="input num ta-right" id="np-menge" type="text" inputmode="decimal" placeholder="0,0">
+              </div>
+              <div class="field">
+                <label class="field__label" for="np-preis">Einzelpreis</label>
+                <input class="input num ta-right" id="np-preis" type="text" inputmode="decimal" placeholder="0,00">
+              </div>
+              <div class="field">
+                <label class="field__label" for="np-summe">Betrag</label>
+                <input class="input ta-right" id="np-summe" type="text" value="0,00 €" readonly tabindex="-1">
+              </div>
+              <button class="btn btn--secondary" type="button" id="add-pos">Hinzufügen</button>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="stack-4">
+
+          <section class="card" aria-labelledby="status-title" data-od-id="status-control">
+            <div class="card__header"><span class="card__label" id="status-title">Statuswechsel</span></div>
+            <p class="note" style="margin-bottom:16px">Nur der erlaubte Folgeübergang des aktuellen Status ist anwählbar.</p>
+            <div class="segmented" role="group" aria-label="Status setzen" id="status-buttons">
+              <button class="segmented__btn" type="button" data-target="angefragt">angefragt</button>
+              <button class="segmented__btn" type="button" data-target="bestaetigt">bestätigt</button>
+              <button class="segmented__btn" type="button" data-target="in-arbeit">in Arbeit</button>
+              <button class="segmented__btn" type="button" data-target="fertig">fertig</button>
+              <button class="segmented__btn" type="button" data-target="abgeholt">abgeholt</button>
+            </div>
+            <p class="field__helper" id="status-hint" style="margin-top:12px"></p>
+          </section>
+
+          <section class="card" aria-labelledby="timeline-title" data-od-id="status-timeline">
+            <div class="card__header"><span class="card__label" id="timeline-title">Statusverlauf</span></div>
+            <ul class="timeline" id="timeline" aria-live="polite">
+              <li class="timeline__item timeline__item--in-arbeit">
+                <div class="timeline__row">
+                  <span class="timeline__time">07.03.2025, 14:32 (UTC)</span>
+                  <span class="badge badge--in-arbeit">in Arbeit</span>
+                </div>
+              </li>
+              <li class="timeline__item timeline__item--bestaetigt timeline__item--old">
+                <div class="timeline__row">
+                  <span class="timeline__time">06.03.2025, 09:15 (UTC)</span>
+                  <span class="badge badge--bestaetigt">bestätigt</span>
+                </div>
+              </li>
+              <li class="timeline__item timeline__item--angefragt timeline__item--old">
+                <div class="timeline__row">
+                  <span class="timeline__time">05.03.2025, 17:48 (UTC)</span>
+                  <span class="badge badge--angefragt">angefragt</span>
+                </div>
+              </li>
+            </ul>
+          </section>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ConfirmDialog -->
+<div class="modal" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal__dialog">
+    <h2 class="modal__title" id="confirm-title">Statuswechsel bestätigen</h2>
+    <p class="modal__body" id="confirm-body">Auftrag AW-2025-000123 auf „fertig“ setzen?</p>
+    <div class="modal__actions">
+      <button class="btn btn--secondary" type="button" id="confirm-cancel">Abbrechen</button>
+      <button class="btn btn--primary" type="button" id="confirm-ok">Bestätigen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span id="toast-text"></span>
+  <button class="toast__dismiss" type="button" id="toast-dismiss" aria-label="Schließen">×</button>
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    var LABELS = { 'angefragt': 'angefragt', 'bestaetigt': 'bestätigt', 'in-arbeit': 'in Arbeit', 'fertig': 'fertig', 'abgeholt': 'abgeholt' };
+    var NEXT = { 'angefragt': 'bestaetigt', 'bestaetigt': 'in-arbeit', 'in-arbeit': 'fertig', 'fertig': 'abgeholt', 'abgeholt': null };
+    var current = 'in-arbeit';
+
+    var badge = document.getElementById('current-badge');
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('#status-buttons [data-target]'));
+    var hint = document.getElementById('status-hint');
+    var timeline = document.getElementById('timeline');
+    var modal = document.getElementById('confirm-modal');
+    var toast = document.getElementById('toast');
+    var pendingTarget = null;
+    var toastTimer = null;
+
+    function renderStatus() {
+      var next = NEXT[current];
+      badge.className = 'badge badge--' + current + ' badge--lg';
+      badge.textContent = LABELS[current];
+      buttons.forEach(function (b) {
+        var target = b.dataset.target;
+        var isCurrent = target === current;
+        var isAllowed = target === next;
+        b.setAttribute('aria-pressed', String(isCurrent));
+        if (isCurrent) {
+          b.setAttribute('aria-current', 'true');
+        } else {
+          b.removeAttribute('aria-current');
+        }
+        if (isAllowed) {
+          b.removeAttribute('aria-disabled');
+          b.disabled = false;
+        } else {
+          b.setAttribute('aria-disabled', 'true');
+          b.disabled = true;
+        }
+      });
+      hint.textContent = next
+        ? 'Erlaubter nächster Schritt: ' + LABELS[next] + '.'
+        : 'Der Auftrag ist abgeschlossen; kein weiterer Statuswechsel möglich.';
+    }
+
+    function nowStamp() {
+      var d = new Date();
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      return pad(d.getUTCDate()) + '.' + pad(d.getUTCMonth() + 1) + '.' + d.getUTCFullYear() +
+        ', ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ' (UTC)';
+    }
+
+    function showToast(text) {
+      document.getElementById('toast-text').textContent = text;
+      toast.hidden = false;
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(function () { toast.hidden = true; }, 5000);
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (b.disabled) return;
+        pendingTarget = b.dataset.target;
+        document.getElementById('confirm-body').textContent =
+          'Auftrag AW-2025-000123 auf „' + LABELS[pendingTarget] + '“ setzen?';
+        modal.classList.add('is-open');
+        document.getElementById('confirm-ok').focus();
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      pendingTarget = null;
+    }
+    document.getElementById('confirm-cancel').addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
+
+    document.getElementById('confirm-ok').addEventListener('click', function () {
+      if (!pendingTarget) return;
+      var target = pendingTarget;
+      // demote the previous newest entry to "old"
+      var oldFirst = timeline.querySelector('.timeline__item');
+      if (oldFirst) oldFirst.classList.add('timeline__item--old');
+      var li = document.createElement('li');
+      li.className = 'timeline__item timeline__item--' + target;
+      li.innerHTML = '<div class="timeline__row"><span class="timeline__time">' + nowStamp() +
+        '</span><span class="badge badge--' + target + '">' + LABELS[target] + '</span></div>';
+      timeline.insertBefore(li, timeline.firstChild);
+      current = target;
+      renderStatus();
+      closeModal();
+      showToast('Status auf „' + LABELS[target] + '“ gesetzt.');
+    });
+
+    document.getElementById('toast-dismiss').addEventListener('click', function () { toast.hidden = true; });
+
+    // ---- Position editor -------------------------------------------------
+    function euro(cents) {
+      var s = (cents / 100).toFixed(2).replace('.', ',');
+      var p = s.split(','); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return p.join(',') + '\u00A0€';
+    }
+    function toCents(str) {
+      if (!str) return 0;
+      var n = parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
+      return isNaN(n) ? 0 : Math.round(n * 100);
+    }
+    var npMenge = document.getElementById('np-menge');
+    var npPreis = document.getElementById('np-preis');
+    function recalcNew() {
+      var menge = toCents(npMenge.value) / 100;
+      var preis = toCents(npPreis.value);
+      document.getElementById('np-summe').value = euro(Math.round(menge * preis));
+    }
+    npMenge.addEventListener('input', recalcNew);
+    npPreis.addEventListener('input', recalcNew);
+
+    document.getElementById('add-pos').addEventListener('click', function () {
+      var beschr = document.getElementById('np-beschr').value.trim();
+      if (!beschr) { document.getElementById('np-beschr').focus(); return; }
+      var mengeRaw = npMenge.value.trim() || '0';
+      var preisCents = toCents(npPreis.value);
+      var mengeVal = toCents(mengeRaw) / 100;
+      var line = Math.round(mengeVal * preisCents);
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + beschr + '</td><td class="num">' + mengeRaw.replace('.', ',') + '</td>' +
+        '<td class="num">' + euro(preisCents) + '</td><td class="num">' + euro(line) + '</td>';
+      document.getElementById('pos-tbody').appendChild(tr);
+      var nettoEl = document.getElementById('pos-netto');
+      var netto = toCents(nettoEl.textContent);
+      netto += line;
+      var steuer = Math.round(netto * 0.19);
+      nettoEl.innerHTML = euro(netto);
+      document.getElementById('pos-steuer').innerHTML = euro(steuer);
+      document.getElementById('pos-brutto').innerHTML = euro(netto + steuer);
+      document.getElementById('np-beschr').value = '';
+      npMenge.value = ''; npPreis.value = ''; recalcNew();
+      showToast('Position gespeichert.');
+    });
+
+    renderStatus();
+  })();
+</script>
+</body>
+</html>

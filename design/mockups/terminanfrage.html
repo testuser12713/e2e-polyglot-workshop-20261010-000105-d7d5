@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminanfrage — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html" aria-current="page">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html" aria-current="page">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container container--narrow">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Kundenbereich</div>
+          <h1 class="page-header__title">Termin anfragen</h1>
+          <p class="page-header__subtitle">Erfassen Sie Ihr Fahrzeug und Ihr Anliegen. Der Auftrag startet im Status „angefragt“ und erhält eine Auftragsnummer.</p>
+        </div>
+      </div>
+
+      <div id="form-status" hidden>
+        <div class="alert alert--success" role="status">
+          <span class="alert__glyph" aria-hidden="true">✓</span>
+          <span>
+            <span class="alert__title">Anfrage gesendet — Auftrag AW-2025-000124 wurde angelegt.</span>
+            <span class="alert__body">Wir melden uns zur Terminbestätigung. Den Status können Sie jederzeit über die <a href="statusabfrage.html">Statusabfrage</a> verfolgen.</span>
+          </span>
+        </div>
+      </div>
+
+      <form id="termin-form" novalidate>
+        <p class="legend">Mit <span class="field__req">*</span> gekennzeichnete Felder sind Pflichtfelder.</p>
+
+        <div class="card">
+          <div class="form-section">
+            <div class="form-section__title">Kontakt</div>
+            <div class="form-grid form-grid--2">
+              <div class="field" data-field>
+                <label class="field__label" for="name">Name <span class="field__req">*</span></label>
+                <input class="input" id="name" name="name" type="text" autocomplete="name" required>
+                <p class="field__error" role="alert">Bitte geben Sie Ihren Namen ein.</p>
+              </div>
+              <div class="field" data-field>
+                <label class="field__label" for="email">E-Mail <span class="field__req">*</span></label>
+                <input class="input" id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-helper">
+                <p class="field__helper" id="email-helper">Für Rückfragen zur Terminbestätigung.</p>
+                <p class="field__error" role="alert">Bitte geben Sie eine gültige E-Mail-Adresse ein.</p>
+              </div>
+              <div class="field" data-field>
+                <label class="field__label" for="telefon">Telefon <span class="field__req">*</span></label>
+                <input class="input" id="telefon" name="telefon" type="tel" autocomplete="tel" required>
+                <p class="field__error" role="alert">Bitte geben Sie eine Telefonnummer ein.</p>
+              </div>
+            </div>
+          </div>
+
+          <hr class="hr-sunken">
+
+          <div class="form-section">
+            <div class="form-section__title">Fahrzeug</div>
+            <div class="form-grid form-grid--2">
+              <div class="field" data-field>
+                <label class="field__label" for="kennzeichen">Kennzeichen <span class="field__req">*</span></label>
+                <input class="input mono" id="kennzeichen" name="kennzeichen" type="text" placeholder="M-AB 1234" required style="text-transform:uppercase" aria-describedby="kz-helper">
+                <p class="field__helper" id="kz-helper">Format: M-AB 1234</p>
+                <p class="field__error" role="alert">Bitte geben Sie das Kennzeichen ein.</p>
+              </div>
+              <div class="field" data-field>
+                <label class="field__label" for="marke">Marke <span class="field__req">*</span></label>
+                <input class="input" id="marke" name="marke" type="text" placeholder="BMW" required>
+                <p class="field__error" role="alert">Bitte geben Sie die Marke ein.</p>
+              </div>
+              <div class="field" data-field>
+                <label class="field__label" for="modell">Modell <span class="field__req">*</span></label>
+                <input class="input" id="modell" name="modell" type="text" placeholder="320d" required>
+                <p class="field__error" role="alert">Bitte geben Sie das Modell ein.</p>
+              </div>
+              <div class="field" data-field>
+                <label class="field__label" for="km">Kilometerstand <span class="field__req">*</span></label>
+                <input class="input num" id="km" name="km" type="number" inputmode="numeric" placeholder="87450" min="0" required aria-describedby="km-helper">
+                <p class="field__helper" id="km-helper">Ganzzahlige Kilometer, z. B. 87450</p>
+                <p class="field__error" role="alert">Bitte geben Sie den Kilometerstand an.</p>
+              </div>
+            </div>
+          </div>
+
+          <hr class="hr-sunken">
+
+          <div class="form-section">
+            <div class="form-section__title">Termin</div>
+            <div class="form-grid form-grid--2">
+              <div class="field" data-field>
+                <label class="field__label" for="wunschtermin">Wunschtermin <span class="field__req">*</span></label>
+                <input class="input" id="wunschtermin" name="wunschtermin" type="date" required>
+                <p class="field__error" role="alert">Bitte wählen Sie einen Wunschtermin.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section-gap">
+          <div class="form-section">
+            <div class="form-section__title">Problem</div>
+            <div class="field" data-field>
+              <label class="field__label" for="problem">Problembeschreibung <span class="field__req">*</span></label>
+              <textarea class="textarea" id="problem" name="problem" required placeholder="Bitte beschreiben Sie das Problem möglichst genau …"></textarea>
+              <p class="field__error" role="alert">Bitte beschreiben Sie das Problem.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section-gap">
+          <div class="form-section">
+            <div class="form-section__title">Erste Positionen (optional)</div>
+            <p class="note" style="margin-bottom:16px">Sie kennen bereits Arbeiten oder Teile? Erfassen Sie sie hier. Alle Beträge sind in Euro, gerundet auf Cent.</p>
+
+            <div id="pos-list">
+              <div class="pos-row" data-pos>
+                <div class="field">
+                  <label class="field__label" for="pos-0-beschr">Beschreibung</label>
+                  <input class="input" id="pos-0-beschr" type="text" placeholder="z. B. Bremsbeläge vorne">
+                </div>
+                <div class="field">
+                  <label class="field__label" for="pos-0-menge">Menge/Std.</label>
+                  <input class="input num ta-right" id="pos-0-menge" type="text" inputmode="decimal" placeholder="0,0" data-menge>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="pos-0-preis">Stundensatz</label>
+                  <input class="input num ta-right" id="pos-0-preis" type="text" inputmode="decimal" placeholder="0,00" data-preis aria-describedby="satz-helper">
+                </div>
+                <div class="field">
+                  <label class="field__label" for="pos-0-summe">Summe</label>
+                  <input class="input ta-right" id="pos-0-summe" type="text" value="0,00 €" readonly tabindex="-1" data-summe>
+                </div>
+                <button class="btn btn--ghost" type="button" data-remove aria-label="Position entfernen">Entfernen</button>
+              </div>
+            </div>
+            <p class="field__helper" id="satz-helper" style="margin-top:8px">Stundensatz gemäß Konfiguration: 89,00 € / h</p>
+
+            <div class="btn-row" style="margin-top:16px">
+              <button class="btn btn--secondary" type="button" id="add-pos">Position hinzufügen</button>
+            </div>
+          </div>
+
+          <hr class="hr-sunken">
+
+          <div class="stack-3" style="align-items:flex-end">
+            <ul class="summary-list" style="min-width:260px">
+              <li class="summary-list__row"><span>Netto</span><span class="mono" id="sum-netto">0,00 €</span></li>
+              <li class="summary-list__row"><span>MwSt. 19 %</span><span class="mono" id="sum-steuer">0,00 €</span></li>
+              <li class="summary-list__row summary-list__row--total"><span>Brutto</span><span class="mono" id="sum-brutto">0,00 €</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn--primary" type="submit" id="submit-btn">Termin anfragen</button>
+          <span class="note">Nach dem Absenden erhalten Sie eine Auftragsnummer. Es wird keine E-Mail versendet.</span>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    // ---- Position editor + money summary ---------------------------------
+    var list = document.getElementById('pos-list');
+    var idx = 1;
+
+    function euro(cents) {
+      var s = (cents / 100).toFixed(2).replace('.', ',');
+      var parts = s.split(',');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return parts.join(',') + '\u00A0€';
+    }
+    function toCents(str) {
+      if (!str) return 0;
+      var n = parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
+      return isNaN(n) ? 0 : Math.round(n * 100);
+    }
+    function recalc() {
+      var netto = 0;
+      Array.prototype.forEach.call(list.querySelectorAll('[data-pos]'), function (row) {
+        var menge = toCents(row.querySelector('[data-menge]').value) / 100;
+        var preis = toCents(row.querySelector('[data-preis]').value);
+        var line = Math.round(menge * preis);
+        row.querySelector('[data-summe]').value = euro(line);
+        netto += line;
+      });
+      var steuer = Math.round((netto * 0.19 + Number.EPSILON));
+      document.getElementById('sum-netto').textContent = euro(netto);
+      document.getElementById('sum-steuer').textContent = euro(steuer);
+      document.getElementById('sum-brutto').textContent = euro(netto + steuer);
+    }
+
+    function bindRow(row) {
+      row.querySelectorAll('[data-menge],[data-preis]').forEach(function (el) {
+        el.addEventListener('input', recalc);
+      });
+      row.querySelector('[data-remove]').addEventListener('click', function () {
+        if (list.querySelectorAll('[data-pos]').length > 1) {
+          row.remove(); recalc();
+        }
+      });
+    }
+    list.querySelectorAll('[data-pos]').forEach(bindRow);
+
+    document.getElementById('add-pos').addEventListener('click', function () {
+      var i = idx++;
+      var row = document.createElement('div');
+      row.className = 'pos-row';
+      row.setAttribute('data-pos', '');
+      row.innerHTML =
+        '<div class="field"><label class="field__label" for="pos-' + i + '-beschr">Beschreibung</label>' +
+        '<input class="input" id="pos-' + i + '-beschr" type="text" placeholder="z. B. Arbeitszeit"></div>' +
+        '<div class="field"><label class="field__label" for="pos-' + i + '-menge">Menge/Std.</label>' +
+        '<input class="input num ta-right" id="pos-' + i + '-menge" type="text" inputmode="decimal" placeholder="0,0" data-menge></div>' +
+        '<div class="field"><label class="field__label" for="pos-' + i + '-preis">Stundensatz</label>' +
+        '<input class="input num ta-right" id="pos-' + i + '-preis" type="text" inputmode="decimal" placeholder="0,00" data-preis></div>' +
+        '<div class="field"><label class="field__label" for="pos-' + i + '-summe">Summe</label>' +
+        '<input class="input ta-right" id="pos-' + i + '-summe" type="text" value="0,00 €" readonly tabindex="-1" data-summe></div>' +
+        '<button class="btn btn--ghost" type="button" data-remove aria-label="Position entfernen">Entfernen</button>';
+      list.appendChild(row);
+      bindRow(row);
+      recalc();
+    });
+
+    // ---- Validation (AC-13): errors only after touch or submit -----------
+    var form = document.getElementById('termin-form');
+
+    function validateField(field) {
+      var control = field.querySelector('.input, .select, .textarea');
+      if (!control) return true;
+      var ok = control.checkValidity();
+      field.classList.toggle('is-invalid', !ok);
+      control.setAttribute('aria-invalid', String(!ok));
+      return ok;
+    }
+
+    form.querySelectorAll('[data-field]').forEach(function (field) {
+      var control = field.querySelector('.input, .select, .textarea');
+      if (!control) return;
+      control.addEventListener('blur', function () { validateField(field); });
+      control.addEventListener('input', function () {
+        if (field.classList.contains('is-invalid')) validateField(field);
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // mock: no backend in this static mockup
+      var fields = form.querySelectorAll('[data-field]');
+      var firstInvalid = null;
+      fields.forEach(function (field) {
+        if (!validateField(field) && !firstInvalid) firstInvalid = field;
+      });
+      if (firstInvalid) {
+        firstInvalid.querySelector('.input, .select, .textarea').focus();
+        return;
+      }
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn__spinner" aria-hidden="true"></span> Wird gesendet …';
+      window.setTimeout(function () {
+        btn.disabled = false;
+        btn.textContent = 'Termin anfragen';
+        var status = document.getElementById('form-status');
+        status.hidden = false;
+        window.scrollTo({ top: status.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+      }, 700);
+    });
+
+    recalc();
+  })();
+</script>
+</body>
+</html>

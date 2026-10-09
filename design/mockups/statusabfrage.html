@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Status abfragen — Werkstatt-Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html" aria-current="page">Kundenbereich</a>
+        <a class="area-switch__item" href="anmeldung.html">Werkstattbereich</a>
+      </nav>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="terminanfrage.html">Terminanfrage</a>
+        <a class="nav-sheet__link" href="statusabfrage.html" aria-current="page">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Anmeldung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Rechtliches</div>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container container--decision">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Kundenbereich</div>
+          <h1 class="page-header__title">Status abfragen</h1>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="note" style="margin-bottom:16px">Geben Sie Auftragsnummer und Kennzeichen ein. Beide Angaben müssen zum selben Auftrag gehören.</p>
+
+        <div id="lookup-error" hidden>
+          <div class="alert alert--error" role="alert" style="margin-bottom:16px">
+            <span class="alert__glyph" aria-hidden="true">⚠</span>
+            <span class="alert__body">Zu diesen Angaben wurde kein Auftrag gefunden.</span>
+          </div>
+        </div>
+
+        <form id="lookup-form" novalidate>
+          <div class="form-grid form-grid--2">
+            <div class="field">
+              <label class="field__label" for="auftragsnummer">Auftragsnummer</label>
+              <input class="input mono" id="auftragsnummer" name="auftragsnummer" type="text" placeholder="AW-2025-000123" style="text-transform:uppercase">
+            </div>
+            <div class="field">
+              <label class="field__label" for="kennzeichen">Kennzeichen</label>
+              <input class="input mono" id="kennzeichen" name="kennzeichen" type="text" placeholder="M-AB 1234" style="text-transform:uppercase">
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:16px">
+            <button class="btn btn--primary" type="submit" id="lookup-btn">Status abfragen</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success result -->
+      <div id="lookup-result" hidden class="section-gap">
+        <div class="card" data-od-id="status-result">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px">
+            <div>
+              <div class="eyebrow">Aktueller Status</div>
+              <span class="badge badge--in-arbeit badge--lg" data-od-id="status-badge-current">in Arbeit</span>
+            </div>
+            <div class="ta-right">
+              <div class="eyebrow">Auftragsnummer</div>
+              <div class="mono strong">AW-2025-000123</div>
+            </div>
+          </div>
+
+          <dl class="kv" style="margin-bottom:24px">
+            <dt>Fahrzeug</dt>
+            <dd>BMW 320d · <span class="mono">M-AB 1234</span></dd>
+            <dt>Wunschtermin</dt>
+            <dd>07.03.2025</dd>
+          </dl>
+
+          <hr class="hr-sunken">
+
+          <div class="card__header">
+            <span class="card__label">Statusverlauf</span>
+          </div>
+          <ul class="timeline" aria-live="polite">
+            <li class="timeline__item timeline__item--in-arbeit">
+              <div class="timeline__row">
+                <span class="timeline__time">07.03.2025, 14:32 (UTC)</span>
+                <span class="badge badge--in-arbeit">in Arbeit</span>
+              </div>
+            </li>
+            <li class="timeline__item timeline__item--bestaetigt timeline__item--old">
+              <div class="timeline__row">
+                <span class="timeline__time">06.03.2025, 09:15 (UTC)</span>
+                <span class="badge badge--bestaetigt">bestätigt</span>
+              </div>
+            </li>
+            <li class="timeline__item timeline__item--angefragt timeline__item--old">
+              <div class="timeline__row">
+                <span class="timeline__time">05.03.2025, 17:48 (UTC)</span>
+                <span class="badge badge--angefragt">angefragt</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="alert alert--info" style="margin-top:16px">
+          <span class="alert__glyph" aria-hidden="true">i</span>
+          <span class="alert__body">Liegt zu diesem Auftrag eine Rechnung vor, finden Sie sie unter <a href="rechnung.html">Rechnung einsehen</a>.</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    var form = document.getElementById('lookup-form');
+    var error = document.getElementById('lookup-error');
+    var result = document.getElementById('lookup-result');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var nr = document.getElementById('auftragsnummer').value.trim().toUpperCase();
+      var kz = document.getElementById('kennzeichen').value.trim().toUpperCase().replace(/\s+/g, ' ');
+      var btn = document.getElementById('lookup-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn__spinner" aria-hidden="true"></span> Wird geladen …';
+
+      window.setTimeout(function () {
+        btn.disabled = false;
+        btn.textContent = 'Status abfragen';
+        var match = (nr === 'AW-2025-000123' && kz === 'M-AB 1234');
+        error.hidden = match;
+        result.hidden = !match;
+      }, 500);
+    });
+  })();
+</script>
+</body>
+</html>

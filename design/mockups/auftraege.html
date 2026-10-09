@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auftragsliste — Werkstattbereich</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="topnav" data-od-id="topnav">
+    <div class="container topnav__inner">
+      <a class="topnav__wordmark" href="index.html">Werkstatt-Portal</a>
+      <span class="topnav__spacer"></span>
+      <nav class="topnav__switch" aria-label="Bereich wechseln">
+        <a class="area-switch__item" href="index.html">Kundenbereich</a>
+        <a class="area-switch__item" href="dashboard.html" aria-current="page">Werkstattbereich</a>
+      </nav>
+      <div class="topnav__user">
+        <span class="user-email" title="meister@werkstatt-berger.de">meister@werkstatt-berger.de</span>
+        <a class="btn btn--ghost btn--sm" href="anmeldung.html">Abmelden</a>
+      </div>
+      <button class="topnav__toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+        <span class="visually-hidden">Menü öffnen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="nav-sheet" id="nav-sheet">
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Werkstattbereich</div>
+        <a class="nav-sheet__link" href="dashboard.html">Dashboard</a>
+        <a class="nav-sheet__link" href="auftraege.html" aria-current="page">Auftragsliste</a>
+        <a class="nav-sheet__link" href="auftrag.html">Auftragsdetail</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Kundenbereich</div>
+        <a class="nav-sheet__link" href="index.html">Start</a>
+        <a class="nav-sheet__link" href="statusabfrage.html">Statusabfrage</a>
+        <a class="nav-sheet__link" href="rechnung.html">Rechnung</a>
+      </div>
+      <div class="nav-sheet__group">
+        <div class="nav-sheet__label">Konto</div>
+        <a class="nav-sheet__link" href="anmeldung.html">Abmelden</a>
+        <a class="nav-sheet__link" href="impressum.html">Impressum</a>
+        <a class="nav-sheet__link" href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page__main" data-od-id="main">
+    <div class="container">
+
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Werkstattbereich</div>
+          <h1 class="page-header__title">Auftragsliste</h1>
+          <p class="page-header__subtitle">Alle Aufträge mit Status und Fahrzeugkennzeichen. Filtern Sie nach Status oder suchen Sie nach Kennzeichen.</p>
+        </div>
+        <a class="btn btn--secondary" href="dashboard.html">Zum Dashboard</a>
+      </div>
+
+      <div class="filterbar" data-od-id="filterbar">
+        <div class="segmented" role="group" aria-label="Nach Status filtern">
+          <button class="segmented__btn" type="button" data-status="" aria-pressed="true">Alle</button>
+          <button class="segmented__btn" type="button" data-status="angefragt" aria-pressed="false">angefragt</button>
+          <button class="segmented__btn" type="button" data-status="bestaetigt" aria-pressed="false">bestätigt</button>
+          <button class="segmented__btn" type="button" data-status="in-arbeit" aria-pressed="false">in Arbeit</button>
+          <button class="segmented__btn" type="button" data-status="fertig" aria-pressed="false">fertig</button>
+          <button class="segmented__btn" type="button" data-status="abgeholt" aria-pressed="false">abgeholt</button>
+        </div>
+        <div class="search" id="search-wrap">
+          <svg class="search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <label class="visually-hidden" for="plate-search">Nach Kennzeichen suchen</label>
+          <input class="input" id="plate-search" type="search" placeholder="Kennzeichen suchen" autocomplete="off">
+          <button class="search__clear" type="button" id="search-clear" aria-label="Suche zurücksetzen">×</button>
+        </div>
+      </div>
+
+      <div class="table-wrap" data-od-id="orders-table">
+        <div class="orders-cards" id="orders-cards"></div>
+
+        <table class="data-table" id="orders-data-table">
+          <thead>
+            <tr>
+              <th scope="col">Auftragsnummer</th>
+              <th scope="col">Kennzeichen</th>
+              <th scope="col">Fahrzeug</th>
+              <th scope="col">Wunschtermin</th>
+              <th scope="col">
+                <button class="sort" type="button" id="sort-status">Status
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+              </th>
+              <th scope="col" class="col-action">Aktion</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody"></tbody>
+        </table>
+
+        <div class="empty" id="orders-empty" hidden data-od-id="orders-empty">
+          <svg class="empty__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          <div class="empty__title">Noch keine Aufträge in diesem Status.</div>
+          <p class="empty__hint">Passen Sie den Statusfilter an oder setzen Sie die Kennzeichensuche zurück.</p>
+          <div class="empty__action"><button class="btn btn--secondary" type="button" id="reset-filters">Filter zurücksetzen</button></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="container legal-footer__inner">
+      <span>© 2025 Kfz-Werkstatt Berger · Werkstatt-Portal</span>
+      <nav class="legal-footer__links" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.topnav__toggle');
+    var sheet = document.getElementById('nav-sheet');
+    if (toggle && sheet) toggle.addEventListener('click', function () {
+      var open = sheet.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    // ---- Data (mirrors the workshop API order list) ----------------------
+    var ORDERS = [
+      { no: 'AW-2025-000123', plate: 'M-AB 1234', vehicle: 'BMW 320d', termin: '07.03.2025', status: 'in-arbeit', label: 'in Arbeit' },
+      { no: 'AW-2025-000122', plate: 'M-CD 9911', vehicle: 'VW Golf 7', termin: '10.03.2025', status: 'bestaetigt', label: 'bestätigt' },
+      { no: 'AW-2025-000121', plate: 'M-EF 2210', vehicle: 'Audi A4 Avant', termin: '11.03.2025', status: 'angefragt', label: 'angefragt' },
+      { no: 'AW-2025-000120', plate: 'M-GH 4455', vehicle: 'Ford Focus', termin: '12.03.2025', status: 'angefragt', label: 'angefragt' },
+      { no: 'AW-2025-000119', plate: 'M-IJ 7788', vehicle: 'Mercedes C200', termin: '06.03.2025', status: 'fertig', label: 'fertig' },
+      { no: 'AW-2025-000118', plate: 'M-KL 1020', vehicle: 'Opel Corsa', termin: '05.03.2025', status: 'abgeholt', label: 'abgeholt' },
+      { no: 'AW-2025-000117', plate: 'M-MN 3033', vehicle: 'Skoda Octavia', termin: '04.03.2025', status: 'bestaetigt', label: 'bestätigt' }
+    ];
+
+    var cardsEl = document.getElementById('orders-cards');
+    var tbodyEl = document.getElementById('orders-tbody');
+    var emptyEl = document.getElementById('orders-empty');
+    var tableEl = document.getElementById('orders-data-table');
+    var searchWrap = document.getElementById('search-wrap');
+    var searchInput = document.getElementById('plate-search');
+    var state = { status: '', plate: '', sortAsc: null };
+
+    function badge(o) {
+      return '<span class="badge badge--' + o.status + '">' + o.label + '</span>';
+    }
+
+    function render() {
+      var plate = state.plate.trim().toUpperCase();
+      var list = ORDERS.filter(function (o) {
+        var okStatus = !state.status || o.status === state.status;
+        var okPlate = !plate || o.plate.indexOf(plate) !== -1;
+        return okStatus && okPlate;
+      });
+      if (state.sortAsc !== null) {
+        list = list.slice().sort(function (a, b) {
+          if (a.label === b.label) return 0;
+          return (a.label < b.label ? -1 : 1) * (state.sortAsc ? 1 : -1);
+        });
+      }
+
+      var has = list.length > 0;
+      cardsEl.innerHTML = '';
+      tbodyEl.innerHTML = '';
+      emptyEl.hidden = has;
+      tableEl.style.display = has ? '' : 'none';
+
+      list.forEach(function (o) {
+        var card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML =
+          '<div class="order-card__top"><span class="order-card__no">' + o.no + '</span>' + badge(o) + '</div>' +
+          '<div class="order-card__row"><span class="order-card__label">Kennzeichen</span><span class="order-card__value mono">' + o.plate + '</span></div>' +
+          '<div class="order-card__row"><span class="order-card__label">Fahrzeug</span><span class="order-card__value">' + o.vehicle + '</span></div>' +
+          '<div class="order-card__row"><span class="order-card__label">Wunschtermin</span><span class="order-card__value num">' + o.termin + '</span></div>' +
+          '<div class="order-card__action"><a class="btn btn--primary" href="auftrag.html">Öffnen</a></div>';
+        cardsEl.appendChild(card);
+
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="cell-no">' + o.no + '</td>' +
+          '<td class="cell-plate">' + o.plate + '</td>' +
+          '<td>' + o.vehicle + '</td>' +
+          '<td class="num">' + o.termin + '</td>' +
+          '<td>' + badge(o) + '</td>' +
+          '<td class="col-action"><a class="btn btn--secondary btn--sm" href="auftrag.html">Öffnen</a></td>';
+        tbodyEl.appendChild(tr);
+      });
+    }
+
+    function syncUrl() {
+      var params = new URLSearchParams();
+      if (state.status) params.set('status', state.status);
+      if (state.plate) params.set('kennzeichen', state.plate);
+      var q = params.toString();
+      try { history.replaceState(null, '', q ? '?' + q : location.pathname); } catch (err) { /* sandbox */ }
+    }
+
+    function setStatus(value) {
+      state.status = value;
+      document.querySelectorAll('.segmented__btn').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.status === value));
+      });
+      render(); syncUrl();
+    }
+
+    document.querySelectorAll('.segmented__btn').forEach(function (b) {
+      b.addEventListener('click', function () { setStatus(b.dataset.status); });
+    });
+
+    // 300ms debounce, trim + uppercase
+    var timer = null;
+    searchInput.addEventListener('input', function () {
+      searchWrap.classList.toggle('is-filled', searchInput.value.length > 0);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function () {
+        state.plate = searchInput.value.trim().toUpperCase();
+        render(); syncUrl();
+      }, 300);
+    });
+
+    document.getElementById('search-clear').addEventListener('click', function () {
+      searchInput.value = '';
+      searchWrap.classList.remove('is-filled');
+      state.plate = '';
+      render(); syncUrl();
+      searchInput.focus();
+    });
+
+    document.getElementById('sort-status').addEventListener('click', function () {
+      state.sortAsc = state.sortAsc === true ? false : true;
+      render();
+    });
+
+    document.getElementById('reset-filters').addEventListener('click', function () {
+      searchInput.value = '';
+      searchWrap.classList.remove('is-filled');
+      setStatus('');
+    });
+
+    // Restore filter state from URL query
+    var q = new URLSearchParams(location.search);
+    if (q.get('kennzeichen')) {
+      searchInput.value = q.get('kennzeichen');
+      searchWrap.classList.add('is-filled');
+      state.plate = q.get('kennzeichen').toUpperCase();
+    }
+    setStatus(q.get('status') || '');
+  })();
+</script>
+</body>
+</html>
