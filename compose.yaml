@@ -1,0 +1,42 @@
+# Local development data stores for the Kfz-Werkstatt customer portal.
+#
+#   docker compose up -d
+#
+# This starts PostgreSQL 18 and Valkey 9.1 with the same images the office
+# uses. The product itself never falls back to SQLite or an in-memory store:
+# without these two services the API reports the connection error and stops.
+#
+# The credentials below are local development defaults only. For anything
+# beyond a local machine, set POSTGRES_PASSWORD and POSTGRES_USER in the
+# environment; they are never committed as the product's real secrets.
+
+services:
+  db:
+    image: docker.io/library/postgres:18.6-trixie
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-workshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-workshop}
+      POSTGRES_DB: ${POSTGRES_DB:-workshop}
+    ports:
+      - "5432:5432"
+    volumes:
+      - workshop-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-workshop} -d ${POSTGRES_DB:-workshop}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  queue:
+    image: docker.io/valkey/valkey:9.1.2-trixie
+    command: ["valkey-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  workshop-db-data:
