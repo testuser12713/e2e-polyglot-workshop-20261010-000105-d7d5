@@ -123,6 +123,46 @@
           "dev": "10"
         }
       }
+    },
+    {
+      "name": "web",
+      "dir": "frontend",
+      "stack": "web-vite",
+      "kind": "static",
+      "install": [
+        [
+          "npm",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ]
+      ],
+      "build": [
+        [
+          "npm",
+          "run",
+          "build"
+        ]
+      ],
+      "test": [
+        [
+          "npm",
+          "test"
+        ]
+      ],
+      "typecheck": [
+        [
+          "npx",
+          "tsc",
+          "--noEmit"
+        ]
+      ],
+      "serve_dir": "dist",
+      "env": {
+        "VITE_API_BASE_URL": {
+          "dev": "${service:api.origin}"
+        }
+      }
     }
   ]
 }
