@@ -38,7 +38,7 @@ describe('App shell', () => {
   it('starts on the appointment request page', () => {
     renderApp()
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Terminanfrage' }),
+      screen.getByRole('heading', { level: 1, name: 'Termin anfragen' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('link', { name: 'Werkstatt-Portal' }),
@@ -57,7 +57,7 @@ describe('App shell', () => {
     await user.click(brand)
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Terminanfrage' }),
+      screen.getByRole('heading', { level: 1, name: 'Termin anfragen' }),
     ).toBeInTheDocument()
   })
 
