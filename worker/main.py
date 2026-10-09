@@ -20,7 +20,6 @@ from typing import Any
 import asyncpg
 from config import Config, ConfigError
 from invoice import process_message
-from persistence import ensure_schema
 
 logger = logging.getLogger("worker.main")
 
@@ -91,7 +90,6 @@ async def _serve(config: Config) -> None:
     queue = await _connect_queue(config)
     db = await _connect_database(config)
     try:
-        await ensure_schema(db)
         await run_worker(config, queue, db, stop=stop)
     finally:
         await queue.close()

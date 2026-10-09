@@ -9,10 +9,13 @@ The worker writes three things per completed order inside a single transaction:
 Idempotency is keyed on the order id: ``invoices.order_id`` is unique and the
 insert uses ``ON CONFLICT (order_id) DO NOTHING``. A repeated message therefore
 inserts nothing and returns ``None``, so neither a second invoice nor a second
-notification can appear.
+notification can appear. ``outbox.invoice_id`` is unique as well, so the
+database itself refuses a second notification for the same invoice.
 
-The order positions are read from the ``order_items`` table owned by the
-workshop API; only the columns named by the shared ``OrderItem`` type are read.
+The table shapes are the ones the workshop API applies from
+``backend/internal/store/schema.sql`` at startup; this module never creates or
+alters the schema. The order positions are read from the shared ``order_items``
+table, and the notification recipient from the order's customer.
 """
 
 from __future__ import annotations
@@ -22,44 +25,6 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from invoice import Invoice
 
-INVOICE_ITEMS_TABLE = "invoice_items"
-
-SCHEMA_STATEMENTS: tuple[str, ...] = (
-    """
-    CREATE TABLE IF NOT EXISTS invoices (
-        id BIGSERIAL PRIMARY KEY,
-        invoice_number TEXT NOT NULL UNIQUE,
-        order_id BIGINT NOT NULL UNIQUE,
-        order_number TEXT NOT NULL,
-        net_cents BIGINT NOT NULL,
-        tax_cents BIGINT NOT NULL,
-        gross_cents BIGINT NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-    )
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS invoice_items (
-        id BIGSERIAL PRIMARY KEY,
-        invoice_id BIGINT NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-        position INTEGER NOT NULL,
-        description TEXT NOT NULL,
-        amount_cents BIGINT NOT NULL
-    )
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS outbox (
-        id BIGSERIAL PRIMARY KEY,
-        invoice_id BIGINT NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-        order_id BIGINT NOT NULL,
-        order_number TEXT NOT NULL,
-        subject TEXT NOT NULL,
-        body TEXT NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-        sent_at TIMESTAMPTZ
-    )
-    """,
-)
-
 ORDER_ITEMS_QUERY = """
     SELECT kind, description, quantity, hours, unit_price_cents, amount_cents
     FROM order_items
@@ -67,35 +32,29 @@ ORDER_ITEMS_QUERY = """
     ORDER BY id
 """
 
+CUSTOMER_EMAIL_QUERY = """
+    SELECT c.email
+    FROM orders o
+    JOIN customers c ON c.id = o.customer_id
+    WHERE o.id = $1
+"""
+
 INSERT_INVOICE = """
-    INSERT INTO invoices (
-        invoice_number, order_id, order_number, net_cents, tax_cents, gross_cents
-    )
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO invoices (invoice_number, order_id, net_cents, tax_cents, gross_cents)
+    VALUES ($1, $2, $3, $4, $5)
     ON CONFLICT (order_id) DO NOTHING
     RETURNING id
 """
 
 INSERT_INVOICE_ITEM = """
-    INSERT INTO invoice_items (invoice_id, position, description, amount_cents)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO invoice_items (invoice_id, description, amount_cents)
+    VALUES ($1, $2, $3)
 """
 
 INSERT_OUTBOX = """
-    INSERT INTO outbox (invoice_id, order_id, order_number, subject, body)
+    INSERT INTO outbox (order_id, invoice_id, recipient, subject, body)
     VALUES ($1, $2, $3, $4, $5)
 """
-
-
-async def ensure_schema(db: Any) -> None:
-    """Create the worker-owned tables if they do not exist yet.
-
-    Called at startup so the worker works against a fresh PostgreSQL instance
-    without any manual migration step. The API's own tables (``order_items``)
-    are not touched here; they are created by the API at its startup.
-    """
-    for statement in SCHEMA_STATEMENTS:
-        await db.execute(statement)
 
 
 async def fetch_order_items(db: Any, order_id: int) -> list[dict[str, Any]]:
@@ -104,18 +63,10 @@ async def fetch_order_items(db: Any, order_id: int) -> list[dict[str, Any]]:
     return [dict(row) for row in rows]
 
 
-async def invoice_exists(db: Any, order_id: int) -> bool:
-    """Return whether an invoice for ``order_id`` is already stored."""
-    value = await db.fetchval("SELECT 1 FROM invoices WHERE order_id = $1", order_id)
-    return value is not None
-
-
-def _notification_body(invoice: Invoice) -> str:
-    return (
-        f"Rechnung {invoice.invoice_number} zum Auftrag {invoice.order_number}: "
-        f"Netto {invoice.net_cents} Cent, MwSt. 19 % {invoice.tax_cents} Cent, "
-        f"Brutto {invoice.gross_cents} Cent."
-    )
+async def fetch_customer_email(db: Any, order_id: int) -> str:
+    """Return the customer e-mail of an order, or an empty string if unknown."""
+    email = await db.fetchval(CUSTOMER_EMAIL_QUERY, order_id)
+    return str(email) if email else ""
 
 
 async def store_invoice(db: Any, invoice: Invoice) -> int | None:
@@ -130,7 +81,6 @@ async def store_invoice(db: Any, invoice: Invoice) -> int | None:
             INSERT_INVOICE,
             invoice.invoice_number,
             invoice.order_id,
-            invoice.order_number,
             invoice.net_cents,
             invoice.tax_cents,
             invoice.gross_cents,
@@ -140,17 +90,21 @@ async def store_invoice(db: Any, invoice: Invoice) -> int | None:
         invoice_id = int(row["id"])
         await db.executemany(
             INSERT_INVOICE_ITEM,
-            [
-                (invoice_id, position, line.description, line.amount_cents)
-                for position, line in enumerate(invoice.lines)
-            ],
+            [(invoice_id, line.description, line.amount_cents) for line in invoice.lines],
+        )
+        recipient = await fetch_customer_email(db, invoice.order_id)
+        subject = f"Rechnung {invoice.invoice_number} zum Auftrag {invoice.order_number}"
+        body = (
+            f"Rechnung {invoice.invoice_number} zum Auftrag {invoice.order_number}: "
+            f"Netto {invoice.net_cents} Cent, MwSt. 19 % {invoice.tax_cents} Cent, "
+            f"Brutto {invoice.gross_cents} Cent."
         )
         await db.execute(
             INSERT_OUTBOX,
-            invoice_id,
             invoice.order_id,
-            invoice.order_number,
-            f"Rechnung {invoice.invoice_number} zum Auftrag {invoice.order_number}",
-            _notification_body(invoice),
+            invoice_id,
+            recipient,
+            subject,
+            body,
         )
         return invoice_id
