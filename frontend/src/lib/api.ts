@@ -77,13 +77,23 @@ export function getAuthToken(): string | null {
   return authToken
 }
 
-/** The configured API origin, with a dev default when RUN.json leaves it unset. */
+/**
+ * The API origin a request is addressed to.
+ *
+ * RUN.json declares `VITE_API_BASE_URL` as the origin of the `api` service, so
+ * the built app talks to the real API. When that variable is absent the app
+ * falls back to the origin it is served from instead of leaving the base URL
+ * unset and letting every request die with an opaque network error.
+ */
 export function apiBaseUrl(): string {
   const configured = import.meta.env.VITE_API_BASE_URL
   if (typeof configured === 'string' && configured.trim().length > 0) {
     return configured.trim().replace(/\/+$/, '')
   }
-  return 'http://localhost:8000'
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return window.location.origin.replace(/\/+$/, '')
+  }
+  return ''
 }
 
 export function apiUrl(path: string): string {
