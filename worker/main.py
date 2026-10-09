@@ -58,8 +58,6 @@ async def run_worker(
         order_id = message.get("order_id")
         try:
             await process_message(message, db=db, queue=queue, config=config)
-        except NotImplementedError:
-            logger.warning("invoice processing not implemented yet; order_id=%s", order_id)
         except Exception:
             logger.exception("failed to process completed order; order_id=%s", order_id)
 
