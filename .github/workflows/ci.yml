@@ -1,0 +1,284 @@
+# office-crew-ci-gates: strict-v10 db:postgres,valkey
+# Auto-generated for composed products v2 (GitHub Actions).
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: docker.io/library/postgres:18.6-trixie@sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336
+        env:
+          POSTGRES_USER: app
+          POSTGRES_DB: app
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app" --health-interval 2s --health-timeout 5s --health-retries 30
+      valkey:
+        image: docker.io/valkey/valkey:9.1.2-trixie@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 2s --health-timeout 5s --health-retries 30
+    env:
+      DATABASE_URL: postgresql://app@localhost:5432/app
+      VALKEY_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27'
+      - shell: bash
+        run: |
+          if [ ! -d backend ]; then echo "No backend/ on this branch — skip"; exit 0; fi
+          cd backend
+          go build ./...
+          go test ./...
+  backend-lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27'
+      - shell: bash
+        run: |
+          if [ ! -d backend ]; then echo "No backend/ on this branch — skip"; exit 0; fi
+          cd backend
+          test -z "$(gofmt -l .)" || true
+          go vet ./... || true
+  worker-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: docker.io/library/postgres:18.6-trixie@sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336
+        env:
+          POSTGRES_USER: app
+          POSTGRES_DB: app
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app" --health-interval 2s --health-timeout 5s --health-retries 30
+      valkey:
+        image: docker.io/valkey/valkey:9.1.2-trixie@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 2s --health-timeout 5s --health-retries 30
+    env:
+      DATABASE_URL: postgresql://app@localhost:5432/app
+      VALKEY_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - shell: bash
+        run: |
+          if [ ! -d worker ]; then echo "No worker/ on this branch — skip"; exit 0; fi
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          cd worker
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f pyproject.toml ]; then pip install -e . || pip install .; fi
+          pip install pytest pytest-cov httpx2 httpx
+          PYTHONPATH=. pytest -v --cov=. --cov-report=term
+      - shell: bash
+        run: |
+          export OFFICE_CREW_RC_STACKS='python'
+          export OFFICE_CREW_RC_DIRS='worker'
+          if [ ! -f RUN.json ]; then echo "No RUN.json — skip"; exit 0; fi
+          OFFICE_CREW_PY=$(command -v python3 || command -v python)
+          if [ -z "$OFFICE_CREW_PY" ]; then echo "No python on this runner — run contract skipped"; exit 0; fi
+          "$OFFICE_CREW_PY" - <<'OFFICE_CREW_RUN_CONTRACT'
+          import json, os, secrets, subprocess, sys, time, urllib.request, urllib.error
+
+          try:
+              doc = json.load(open("RUN.json", encoding="utf-8"))
+          except Exception as e:
+              sys.exit("RUN.json is not readable JSON: %s" % e)
+          if doc.get("runcontract") != 1:
+              print("RUN.json is not an office-crew run contract — skip"); raise SystemExit(0)
+
+          scopes = {s.strip() for s in (os.environ.get("OFFICE_CREW_RC_STACKS") or "").split(",") if s.strip()}
+
+          def norm(d):
+              d = str(d or ".").replace("\\", "/").strip().strip("/")
+              while d.startswith("./"):
+                  d = d[2:]
+              return d or "."
+
+          dirs = {norm(s) for s in (os.environ.get("OFFICE_CREW_RC_DIRS") or "").split(",") if s.strip()}
+
+          DATABASES = {'postgres': 'DATABASE_URL', 'valkey': 'VALKEY_URL'}
+          dbs = {s.get("name"): s.get("engine") for s in doc.get("services", [])
+                 if isinstance(s, dict) and s.get("kind") == "database"}
+
+          def with_databases(text):
+              for db, engine in dbs.items():
+                  token = "${service:%s.url}" % db
+                  if token in text:
+                      value = os.environ.get(DATABASES.get(engine, ""), "")
+                      if not value:
+                          return None
+                      text = text.replace(token, value)
+              return text
+
+          failures = []
+          started = []
+          deferred = []
+          no_database = []
+          for svc in doc.get("services", []):
+              name, where = svc.get("name", "?"), svc.get("dir", ".")
+              if svc.get("kind") != "server" or not svc.get("start"):
+                  continue
+              stack = svc.get("stack") or "?"
+              if scopes and stack not in scopes:
+                  deferred.append("%s (%s)" % (name, stack))
+                  print("%s: stack '%s' is not installed in this job - deferred to the pre-merge "
+                        "gate, which runs its RUN.json install steps" % (name, stack))
+                  continue
+              if dirs and norm(where) not in dirs:
+                  deferred.append("%s (%s/)" % (name, norm(where)))
+                  print("%s: %s/ is installed by another job of this pipeline - checked there"
+                        % (name, norm(where)))
+                  continue
+              if not os.path.isdir(where):
+                  print("%s: %s/ not on this branch — skip" % (name, where)); continue
+              port = int(svc.get("port") or 8000)
+              env = dict(os.environ)
+              for key, spec in (svc.get("env") or {}).items():
+                  if spec.get("external"):
+                      continue          # the product must boot WITHOUT it — that is the test
+                  if spec.get("generate"):
+                      env[key] = secrets.token_hex(int(spec.get("bytes") or 32))
+                  else:
+                      env[key] = with_databases(str(spec.get("dev", "")))
+              if svc.get("port_env"):
+                  env[svc["port_env"]] = str(port)
+              argv = [with_databases(a.replace("${python}", sys.executable).replace("${PORT}", str(port)))
+                      for a in svc["start"]]
+              if None in argv or None in env.values():
+                  no_database.append(name)
+                  print("%s: names a database this job does not run - not started here" % name)
+                  continue
+              if any("${" in a for a in argv):
+                  failures.append("%s: unresolved placeholder in start" % name); continue
+              print("::group::%s" % name); print("starting:", " ".join(argv))
+              proc = subprocess.Popen(argv, cwd=where, env=env,
+                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                                      start_new_session=True)
+              path = (svc.get("health") or {}).get("path") or "/"
+              want = set((svc.get("health") or {}).get("expect_status") or [200])
+              deadline = time.time() + min(int(svc.get("ready_timeout_s") or 30), 60)
+              status = None
+              try:
+                  while time.time() < deadline and proc.poll() is None:
+                      try:
+                          with urllib.request.urlopen("http://127.0.0.1:%d%s" % (port, path), timeout=2) as r:
+                              status = r.status
+                      except urllib.error.HTTPError as he:
+                          status = he.code
+                      except OSError:
+                          time.sleep(0.5); continue
+                      break
+                  if proc.poll() is not None:
+                      failures.append("%s: exited with %s before answering %s" % (name, proc.returncode, path))
+                  elif status is None:
+                      failures.append("%s: never answered %s within the declared timeout" % (name, path))
+                  elif status not in want:
+                      failures.append("%s: %s answered %s, RUN.json expects %s"
+                                      % (name, path, status, sorted(want)))
+                  else:
+                      started.append(name)
+                      print("%s: %s answered %s" % (name, path, status))
+              finally:
+                  try:
+                      os.killpg(os.getpgid(proc.pid), 9)
+                  except Exception:
+                      pass
+                  if proc.poll() is None:
+                      proc.kill()
+                  try:
+                      out = (proc.communicate(timeout=15)[0] or "")[-2000:]
+                  except Exception:
+                      out = "(output not drained: the product left a child holding the pipe)"
+                  if out.strip():
+                      print(out)
+                  print("::endgroup::")
+
+          if failures:
+              sys.exit("the product does not start the way RUN.json says:\n- " + "\n- ".join(failures))
+          print("run contract: started and probed %s" % (", ".join(started) if started else "nothing"))
+          if deferred:
+              print("run contract: NOT checked here (wrong job for the stack): %s" % ", ".join(deferred))
+          if no_database:
+              print("run contract: NOT checked here (no database in this job): %s" % ", ".join(no_database))
+          OFFICE_CREW_RUN_CONTRACT
+  worker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - shell: bash
+        run: |
+          if [ ! -d worker ]; then echo "No worker/ on this branch — skip"; exit 0; fi
+          cd worker
+          pip install ruff==0.16.0
+          ruff format --check . || true
+          ruff check --select E9,F,B --ignore B008 .
+          ruff check . || true
+  frontend-build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: docker.io/library/postgres:18.6-trixie@sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336
+        env:
+          POSTGRES_USER: app
+          POSTGRES_DB: app
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app" --health-interval 2s --health-timeout 5s --health-retries 30
+      valkey:
+        image: docker.io/valkey/valkey:9.1.2-trixie@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 2s --health-timeout 5s --health-retries 30
+    env:
+      DATABASE_URL: postgresql://app@localhost:5432/app
+      VALKEY_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - shell: bash
+        run: |
+          if [ ! -d frontend ]; then echo "No frontend/ on this branch — skip"; exit 0; fi
+          cd frontend
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci --no-audit --no-fund || npm install --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+            if grep -q '"test"' package.json; then T=$(sed -n 's/.*"test"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' package.json | head -1); A=''; case "$T" in *vitest*) case "$T" in *--run*|*" run"*) ;; *) A="--run";; esac; case "$T" in *--passWithNoTests*) ;; *) A="$A --passWithNoTests";; esac;; *jest*) case "$T" in *--passWithNoTests*) ;; *) A="--passWithNoTests";; esac;; esac; if [ -n "$A" ]; then npm test -- $A; else npm test; fi; else shopt -s nullglob; tests=(tests/*.test.mjs tests/*.test.js src/*.test.mjs); if [ ${#tests[@]} -gt 0 ]; then echo "No test script in package.json — running ${#tests[@]} node test file(s)"; node --test "${tests[@]}"; else echo 'No test script in package.json — skip'; fi; fi
+            if grep -q '"build"' package.json; then npm run build; fi
+          else
+            shopt -s nullglob
+            tests=(tests/*.test.mjs tests/*.test.js src/*.test.mjs)
+            if [ ${#tests[@]} -gt 0 ]; then
+              echo "Running ${#tests[@]} node test file(s)…"
+              node --test "${tests[@]}"
+            else
+              echo "Vanilla frontend without node tests — accepted"
+            fi
+          fi
