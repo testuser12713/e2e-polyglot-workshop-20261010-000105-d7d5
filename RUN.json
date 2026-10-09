@@ -157,6 +157,18 @@
           "--noEmit"
         ]
       ],
+      "start": [
+        "npm",
+        "run",
+        "preview",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "${PORT}"
+      ],
+      "port": 4173,
+      "port_env": "PORT",
       "serve_dir": "dist",
       "env": {
         "VITE_API_BASE_URL": {

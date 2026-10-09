@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, getAuthToken, request, setAuthToken } from './api'
+import {
+  ApiError,
+  apiBaseUrl,
+  apiUrl,
+  getAuthToken,
+  request,
+  setAuthToken,
+} from './api'
 
 function fakeResponse(status: number, body: unknown): Response {
   return {
@@ -23,6 +30,24 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllGlobals()
   vi.unstubAllEnvs()
+})
+
+describe('apiBaseUrl', () => {
+  it('uses the configured VITE_API_BASE_URL when it is set', () => {
+    vi.stubEnv('VITE_API_BASE_URL', 'https://api.example.test/')
+
+    expect(apiBaseUrl()).toBe('https://api.example.test')
+    expect(apiUrl('/api/shop/login')).toBe('https://api.example.test/api/shop/login')
+  })
+
+  it('falls back to the current origin when VITE_API_BASE_URL is absent', () => {
+    vi.stubEnv('VITE_API_BASE_URL', '')
+
+    expect(apiBaseUrl()).toBe(window.location.origin)
+    expect(apiUrl('/api/shop/login')).toBe(
+      `${window.location.origin}/api/shop/login`,
+    )
+  })
 })
 
 describe('request', () => {
