@@ -4,29 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 )
-
-// openTestStore connects to the real PostgreSQL instance used by the API tests
-// (SPEC AC-25). It is skipped when DATABASE_URL is not set.
-func openTestStore(t *testing.T) *Store {
-	t.Helper()
-	databaseURL := os.Getenv("DATABASE_URL")
-	if databaseURL == "" {
-		t.Skip("DATABASE_URL not set; skipping PostgreSQL integration test")
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-
-	st, err := Open(ctx, databaseURL)
-	if err != nil {
-		t.Fatalf("Open: %v", err)
-	}
-	t.Cleanup(st.Close)
-	return st
-}
 
 func uniqueEmail(t *testing.T) string {
 	t.Helper()
@@ -48,9 +28,7 @@ func deleteEmployee(t *testing.T, st *Store, email string) {
 // first employee is created once, a second bootstrap does not duplicate it and
 // does not overwrite a password that was changed afterwards.
 func TestBootstrapEmployeeIsIdempotentAndKeepsChangedPassword(t *testing.T) {
-	st := openTestStore(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
+	st, ctx := openTestStore(t)
 
 	email := uniqueEmail(t)
 	t.Cleanup(func() { deleteEmployee(t, st, email) })
@@ -113,9 +91,7 @@ func TestBootstrapEmployeeIsIdempotentAndKeepsChangedPassword(t *testing.T) {
 // TestLookupEmployeeUnknownEmail proves an unknown e-mail reports ErrNotFound,
 // the signal the login handler turns into the generic 401.
 func TestLookupEmployeeUnknownEmail(t *testing.T) {
-	st := openTestStore(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
+	st, ctx := openTestStore(t)
 
 	_, _, err := st.LookupEmployeeCredentials(ctx, uniqueEmail(t))
 	if !errors.Is(err, ErrNotFound) {
@@ -126,9 +102,7 @@ func TestLookupEmployeeUnknownEmail(t *testing.T) {
 // TestSessionRoundTrip proves a created session resolves to its employee and
 // that an unknown token does not.
 func TestSessionRoundTrip(t *testing.T) {
-	st := openTestStore(t)
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
+	st, ctx := openTestStore(t)
 
 	email := uniqueEmail(t)
 	t.Cleanup(func() { deleteEmployee(t, st, email) })
